@@ -66,12 +66,16 @@ The application will be available at [http://localhost:3000](http://localhost:30
 RBAC di proyek ini berbasis NextAuth (JWT) + middleware App Router:
 
 - **Token berisi roles & permissions**
-  Saat login, JWT diperkaya dengan daftar `roles` dan `permissions` dari database.
+  Saat login, JWT di inject `roles` dan `permissions` user dari database.
 - **Deklarasi izin per route**:
 
-  Setiap file `app/**/page.tsx` atau `app/**/route.ts` bisa mengekspor `export const permissions = [...]`.
+  Setiap file `app/**/page.tsx` atau `app/**/route.ts` bisa mengekspor
 
-- **Auto-generate peta izin**:
+  ```ts
+  export const permissions = ["read:user", "create:user"...]`.
+  ```
+
+- **Auto-generate path permissions**:
 
   Script `permissions:generate` membaca deklarasi tersebut dan membuat file `lib/routes/permissions.ts` (jangan diedit manual).
 
@@ -83,7 +87,7 @@ RBAC di proyek ini berbasis NextAuth (JWT) + middleware App Router:
 
   Untuk response JSON 403 yang konsisten, gunakan `safeHandler(handler, ["permission"])` di masing-masing handler API.
 
-### Cara Pakai
+### How To Use
 
 1. Seed & jalankan dev
 
@@ -111,25 +115,35 @@ RBAC di proyek ini berbasis NextAuth (JWT) + middleware App Router:
    // app/api/users/route.ts
    import { NextResponse } from 'next/server';
    import { safeHandler } from '~/lib/handler/safe-handler';
-
-   // Agar ikut diproteksi middleware berdasarkan path
-   export const permissions = ['read:user', 'create:user', 'update:user'];
-
-   // Guard per-handler (return JSON 403 if does'nt have proper permissions)
-   export const GET = safeHandler(async () => {
-     return NextResponse.json({ message: 'ok' });
-   }, ['read:user']);
    ```
+
+// example guard permissions, but does'nt support per method security
+// all handler will be protected to this permission
+export const permissions = ['read:user', 'create:user', 'update:user'];
+
+export const GET = safeHandler(async () => {
+const data = await db
+.select({
+id: users.id,
+name: users.name,
+email: users.email,
+})
+.from(users);
+return NextResponse.json({ message: 'Success Get Data User', data: data });
+// return 403 if doesn't have this permission
+}, ['something:permission']);
+
+````
 
 4. Atur public route (opsional)
 
-   Secara default, `middleware.ts` mengizinkan akses tanpa login ke:
+Secara default, `middleware.ts` mengizinkan akses tanpa login ke:
 
-   ```ts
-   const publicRoutes = ['/', '/auth/register', '/auth/login'];
-   ```
+```ts
+const publicRoutes = ['/', '/auth/register', '/auth/login'];
+````
 
-   Tambahkan path lain ke `publicRoutes` di `middleware.ts` jika dibutuhkan.
+Tambahkan path lain ke `publicRoutes` di `middleware.ts` jika dibutuhkan.
 
 ### Catatan Penting
 

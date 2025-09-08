@@ -72,9 +72,7 @@ async function generateRoutePermissions() {
 
     if (routePath === '/') {
       // Root route
-      if (basePermissions['/']) {
-        collected.push(...basePermissions['/']);
-      }
+      if (basePermissions['/']) collected.push(...basePermissions['/']);
     } else {
       const segments = routePath.split('/').filter(Boolean);
 
@@ -192,6 +190,4 @@ async function main() {
   }
 }
 
-if (require.main === module) {
-  main().catch(console.error);
-}
+if (require.main === module) main().catch(console.error);

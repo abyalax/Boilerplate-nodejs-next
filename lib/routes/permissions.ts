@@ -1,5 +1,5 @@
 // Auto-generated file - do not edit manually
-// Generated at: 2025-09-08T22:04:50.967Z
+// Generated at: 2025-09-08T22:24:01.204Z
 
 // Base permissions directly from route files
 export const baseRoutePermissions: Record<string, string[]> = {
