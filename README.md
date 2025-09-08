@@ -1,36 +1,141 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Boilerplate NextJS Project
+
+## Prerequisites
+
+- Node.js >= 22
+- PNPM >= 10.15.1
+- Docker and Docker Compose
 
 ## Getting Started
 
-First, run the development server:
+### 1. Install Dependencies
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Start Docker Services
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+docker compose -f docker-compose.dev.yaml up
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 3. Database Setup
 
-## Learn More
+Run these commands in sequence:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+# Generate database schema
+pnpm db:generate
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Run database migrations
+pnpm db:migrate
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# Seed the database with initial data
+pnpm db:seed
 
-## Deploy on Vercel
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 4. Start Development Server
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+pnpm dev
+```
+
+The application will be available at [http://localhost:3000](http://localhost:3000).
+
+## Available Scripts
+
+- `pnpm dev` - Start development server with Turbopack
+- `pnpm build` - Build the application
+- `pnpm start` - Start production server
+- `pnpm lint` - Run ESLint
+- `pnpm db:generate` - Generate database schema
+- `pnpm db:migrate` - Run database migrations
+- `pnpm db:seed` - Seed the database with initial data
+- `pnpm db:studio` - Database Studio to manage data
+- `pnpm db:truncate --help` - Show help
+- `pnpm db:truncate` - Clear all data (keeps structure)
+- `pnpm db:truncate user_roles` - Clear specific tables example users and user_roles
+- `pnpm db:drop` - Drop all tables
+- `pnpm db:drop roles permissions` - Drop specific tables example roles and permissions
+- `pnpm db:drop -- help` - Show help
+
+## How RBAC Works
+
+RBAC di proyek ini berbasis NextAuth (JWT) + middleware App Router:
+
+- **Token berisi roles & permissions**
+  Saat login, JWT diperkaya dengan daftar `roles` dan `permissions` dari database.
+- **Deklarasi izin per route**:
+
+  Setiap file `app/**/page.tsx` atau `app/**/route.ts` bisa mengekspor `export const permissions = [...]`.
+
+- **Auto-generate peta izin**:
+
+  Script `permissions:generate` membaca deklarasi tersebut dan membuat file `lib/routes/permissions.ts` (jangan diedit manual).
+
+- **Enforcement di Middleware**:
+
+  `middleware.ts` membaca path permissions dan memblokir akses jika user tidak memiliki semua permission yang dibutuhkan untuk path tersebut (mendukung route dinamis seperti `[id]` → `:id` dan catch-all `*`).
+
+- **Guard ekstra di API**:
+
+  Untuk response JSON 403 yang konsisten, gunakan `safeHandler(handler, ["permission"])` di masing-masing handler API.
+
+### Cara Pakai
+
+1. Seed & jalankan dev
+
+   ```bash
+   pnpm db:seed
+   pnpm dev
+   ```
+
+   Dev script otomatis menjalankan watcher `permissions:watch` yang akan regenerate `lib/routes/permissions.ts` ketika export array `permissions` di route/page.
+
+2. Tambahkan izin pada halaman (Page Route)
+
+   ```ts
+   // app/admin/page.tsx
+   export const permissions = ["read:user", "create:user"]; // halaman ini butuh keduanya
+
+   export default function Page() {
+   return <div>Admin</div>;
+   }
+   ```
+
+3. Tambahkan izin pada API (Route Handler)
+
+   ```ts
+   // app/api/users/route.ts
+   import { NextResponse } from 'next/server';
+   import { safeHandler } from '~/lib/handler/safe-handler';
+
+   // Agar ikut diproteksi middleware berdasarkan path
+   export const permissions = ['read:user', 'create:user', 'update:user'];
+
+   // Guard per-handler (return JSON 403 if does'nt have proper permissions)
+   export const GET = safeHandler(async () => {
+     return NextResponse.json({ message: 'ok' });
+   }, ['read:user']);
+   ```
+
+4. Atur public route (opsional)
+
+   Secara default, `middleware.ts` mengizinkan akses tanpa login ke:
+
+   ```ts
+   const publicRoutes = ['/', '/auth/register', '/auth/login'];
+   ```
+
+   Tambahkan path lain ke `publicRoutes` di `middleware.ts` jika dibutuhkan.
+
+### Catatan Penting
+
+- File `lib/routes/permissions.ts` adalah hasil generate. Jangan edit manual.
+- Build production otomatis menjalankan generate: `pnpm build` → `pnpm permissions:generate` + `next build`.
+- Route dinamis seperti `/admin/users/[id]` akan di-match sebagai `/admin/users/:id` oleh middleware.
+- Jika user tidak punya izin:
+  - Pada halaman/API yang dilindungi middleware: akan di-redirect ke `/auth/login`.
+  - Dengan `safeHandler`: handler dapat mengembalikan `403` JSON secara eksplisit.

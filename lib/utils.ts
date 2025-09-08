@@ -1,0 +1,28 @@
+import { rankItem } from '@tanstack/match-sorter-utils';
+import type { FilterFn } from '@tanstack/react-table';
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+export const createFuzzyFilter = <T>(): FilterFn<T> => {
+  return (row, columnId, value, addMeta) => {
+    if (!value || value === '') return true;
+    const itemValue = row.getValue(columnId);
+    if (itemValue === null || itemValue === undefined) return false;
+    const itemRank = rankItem(String(itemValue), String(value));
+    addMeta({ itemRank });
+    return itemRank.passed;
+  };
+};
+
+export const reorder = (list: string[], startIndex: number, endIndex: number): string[] => {
+  const result = Array.from(list);
+  const [removed] = result.splice(startIndex, 1);
+  result.splice(endIndex, 0, removed);
+  return result;
+};
+
+export type ExtractString<T> = T extends object ? { [K in keyof T]: ExtractString<T[K]> }[keyof T] : T;

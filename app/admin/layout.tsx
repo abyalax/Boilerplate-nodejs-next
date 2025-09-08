@@ -1,0 +1,14 @@
+import { Navbar } from '~/components/ui/navbar';
+import { ReactNode } from 'react';
+
+export default function Layout({ children }: { children: ReactNode }) {
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Navbar />
+      <main className="flex-1 p-4">{children}</main>
+      <footer className="border-t py-6 text-center text-sm text-muted-foreground">
+        <p>© {new Date().getFullYear()} Next Boilerplate. All rights reserved.</p>
+      </footer>
+    </div>
+  );
+}
