@@ -1,12 +1,12 @@
 {
   "version": "7",
-  "dialect": "mysql",
+  "dialect": "postgresql",
   "entries": [
     {
       "idx": 0,
-      "version": "5",
-      "when": 1757223901525,
-      "tag": "0000_conscious_doctor_octopus",
+      "version": "7",
+      "when": 1757753886048,
+      "tag": "0000_nebulous_proemial_gods",
       "breakpoints": true
     }
   ]

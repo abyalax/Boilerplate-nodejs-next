@@ -50,6 +50,6 @@ export const metadata: Metadata = {
 export const permissions = [];
 
 export default async function Home() {
-  await new Promise((resolve) => setTimeout(resolve, 2000));
+  await new Promise((resolve) => setTimeout(resolve, 1000));
   return <PageLanding />;
 }

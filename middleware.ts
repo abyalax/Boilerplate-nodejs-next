@@ -7,18 +7,12 @@ import { getToken } from 'next-auth/jwt';
 const publicRoutes = ['/', '/auth/register', '/auth/login'];
 
 function getRequiredPermissions(pathname: string): string[] {
-  // Direct lookup - O(1)
   if (routePermissions[pathname]) return routePermissions[pathname];
-
-  // Dynamic route matching
   for (const [pattern, permissions] of Object.entries(routePermissions)) {
     if (pattern.includes(':') || pattern.includes('*')) {
-      if (matchesPattern(pathname, pattern)) {
-        return permissions;
-      }
+      if (matchesPattern(pathname, pattern)) return permissions;
     }
   }
-
   return [];
 }
 
@@ -34,6 +28,17 @@ function matchesPattern(pathname: string, pattern: string): boolean {
   return patternSegments.every((seg, i) => seg.startsWith(':') || seg === pathSegments[i]);
 }
 
+function matchPermission(userPermissions: string[], required: string): boolean {
+  return userPermissions.some((p) => {
+    if (p === required) return true; // exact match
+    if (p.endsWith('*')) {
+      const prefix = p.replace('*', ''); // wildcard
+      return required.startsWith(prefix);
+    }
+    return false;
+  });
+}
+
 export async function middleware(req: NextRequest) {
   try {
     const pathname = req.nextUrl.pathname;
@@ -43,7 +48,8 @@ export async function middleware(req: NextRequest) {
     const requiredPermissions = getRequiredPermissions(pathname);
     const method = req.method;
     console.log(` ${method} ${pathname} 🔑 Required permissions: `, requiredPermissions);
-    const hasPermission = requiredPermissions.every((p) => userPermissions.includes(p));
+    const hasPermission = requiredPermissions.every((p) => matchPermission(userPermissions, p));
+    console.log(`🛡️  pass middleware: `, hasPermission);
     if (!hasPermission) return NextResponse.redirect(new URL('/auth/login', req.url));
     return NextResponse.next();
   } catch (error) {
@@ -57,7 +63,6 @@ export const config = {
     // Protect semua API routes
     '/api/:path*',
     // Match semua route kecuali:
-    // - API
     // - Next.js static & image
     // - favicon
     // - login

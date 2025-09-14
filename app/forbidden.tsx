@@ -1,7 +1,7 @@
 'use client';
 
-import { FaArrowLeft } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
+import { FaArrowLeft } from 'react-icons/fa';
 
 export default function ForbiddenPage() {
   const { push, refresh } = useRouter();

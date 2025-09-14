@@ -17,7 +17,7 @@ pnpm install
 ### 2. Start Docker Services
 
 ```bash
-docker compose -f docker-compose.dev.yaml up
+docker compose -f docker-compose.yaml up
 ```
 
 ### 3. Database Setup
@@ -111,29 +111,27 @@ RBAC di proyek ini berbasis NextAuth (JWT) + middleware App Router:
 
 3. Tambahkan izin pada API (Route Handler)
 
-   ```ts
-   // app/api/users/route.ts
-   import { NextResponse } from 'next/server';
-   import { safeHandler } from '~/lib/handler/safe-handler';
-   ```
+```ts
+// app/api/users/route.ts
+import { NextResponse } from 'next/server';
+import { safeHandler } from '~/lib/handler/safe-handler';
 
 // example guard permissions, but does'nt support per method security
 // all handler will be protected to this permission
 export const permissions = ['read:user', 'create:user', 'update:user'];
 
 export const GET = safeHandler(async () => {
-const data = await db
-.select({
-id: users.id,
-name: users.name,
-email: users.email,
-})
-.from(users);
-return NextResponse.json({ message: 'Success Get Data User', data: data });
-// return 403 if doesn't have this permission
+  const data = await db
+    .select({
+      id: users.id,
+      name: users.name,
+      email: users.email,
+    })
+    .from(users);
+  return NextResponse.json({ message: 'Success Get Data User', data: data });
+  // return 403 if doesn't have this permission
 }, ['something:permission']);
-
-````
+```
 
 4. Atur public route (opsional)
 
@@ -141,7 +139,7 @@ Secara default, `middleware.ts` mengizinkan akses tanpa login ke:
 
 ```ts
 const publicRoutes = ['/', '/auth/register', '/auth/login'];
-````
+```
 
 Tambahkan path lain ke `publicRoutes` di `middleware.ts` jika dibutuhkan.
 

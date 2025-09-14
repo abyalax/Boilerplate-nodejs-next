@@ -4,12 +4,8 @@ import { env } from './common/const/credential';
 export default defineConfig({
   out: './drizzle',
   schema: './db/schema.ts',
-  dialect: 'mysql',
+  dialect: 'postgresql',
   dbCredentials: {
-    database: env.DATABASE_NAME,
-    host: env.DATABASE_HOST,
-    password: env.DATABASE_PASSWORD,
-    port: env.DATABASE_PORT,
-    user: env.DATABASE_USER,
+    url: env.DATABASE_URL,
   },
 });

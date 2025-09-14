@@ -8,8 +8,13 @@ import { ToggleTheme } from '~/app/_components/toggle-theme';
 import { useSession, signOut } from 'next-auth/react';
 import { Button } from './button';
 import Link from 'next/link';
+import { FC } from 'react';
 
-export function Navbar() {
+interface NavbarProps {
+  navigation?: { name: string; href: string }[];
+}
+
+export const Navbar: FC<NavbarProps> = ({ navigation }) => {
   const { data: session } = useSession();
 
   return (
@@ -23,25 +28,13 @@ export function Navbar() {
         {/* Navigation */}
         <NavigationMenu className="mx-6">
           <NavigationMenuList>
-            <NavigationMenuItem>
-              <NavigationMenuLink href="/home" className={navigationMenuTriggerStyle()}>
-                Home
-              </NavigationMenuLink>
-            </NavigationMenuItem>
-            {session?.user?.roles?.some((role) => role.name === 'Admin') && (
-              <NavigationMenuItem>
-                <NavigationMenuLink href="/admin" className={navigationMenuTriggerStyle()}>
-                  Admin
+            {navigation?.map((item, index) => (
+              <NavigationMenuItem key={index}>
+                <NavigationMenuLink href={item.href} className={navigationMenuTriggerStyle()}>
+                  {item.name}
                 </NavigationMenuLink>
               </NavigationMenuItem>
-            )}
-            {session?.user?.roles?.some((role) => role.name === 'Admin') && (
-              <NavigationMenuItem>
-                <NavigationMenuLink href="/admin/users" className={navigationMenuTriggerStyle()}>
-                  Users
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-            )}
+            ))}
           </NavigationMenuList>
         </NavigationMenu>
 
@@ -80,4 +73,4 @@ export function Navbar() {
       </div>
     </div>
   );
-}
+};

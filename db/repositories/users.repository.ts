@@ -1,46 +1,54 @@
-import { Permission, Role, User } from '~/db/schema';
-import { SQL } from 'drizzle-orm';
-import { db } from '..';
+import { BaseUser, CreateUser, Permission, Role, UpdateUser, User, UserRoles, userRoles, users } from '~/db/schema';
+import { UnprocessableEntity } from '~/lib/handler/error';
+import { eq, SQL } from 'drizzle-orm';
+import * as bcrypt from 'bcrypt';
+import { db } from '~/db';
 
-// NextAuth compatible user type
-export interface AuthUser {
-  id: string;
-  name: string;
-  email: string;
-  roles: Role[];
-  permissions: Permission[];
-}
+class UserRepository {
+  async findById(id: number): Promise<User | undefined> {
+    return await this.find(eq(users.id, id));
+  }
 
-export type RawUser = {
-  id: number;
-  name: string;
-  password: string;
-  email: string;
-  userRoles: {
-    roleId: number;
-    userId: number;
-    role: {
-      id: number;
-      name: string;
-      rolePermissions: {
-        roleId: number;
-        permissionId: number;
-        permission: {
-          id: number;
-          name: string;
-          key: string;
-        };
-      }[];
-    };
-  }[];
-};
+  async create(user: CreateUser): Promise<BaseUser> {
+    const userExist = await this.baseFind(eq(users.email, user.email));
+    if (userExist) throw new UnprocessableEntity('Email already exist');
+    const hashed = await bcrypt.hash(user.password, 10);
+    return await db.transaction(async (tx) => {
+      const [inserted] = await tx
+        .insert(users)
+        .values({
+          email: user.email,
+          name: user.name,
+          password: hashed,
+        })
+        .returning();
 
-export class UserRepository {
-  /**
-   * Generic find user with relations by any field
-   */
-  static async find(whereClause: SQL): Promise<User | undefined> {
-    const userWithRoles: RawUser | undefined = await db.query.users.findFirst({
+      await tx.insert(userRoles).values({
+        userId: inserted.id,
+        roleId: user.roleId ?? 1,
+      });
+
+      return inserted;
+    });
+  }
+
+  async update(user: UpdateUser): Promise<BaseUser> {
+    const [updated] = await db
+      .update(users)
+      .set({
+        ...user,
+      })
+      .returning();
+    return updated;
+  }
+
+  async delete(id: number): Promise<boolean> {
+    const deleted = await db.delete(users).where(eq(users.id, id));
+    return deleted.rowCount !== null;
+  }
+
+  async rawFind(whereClause: SQL): Promise<UserRoles | undefined> {
+    return await db.query.users.findFirst({
       where: whereClause,
       with: {
         userRoles: {
@@ -61,88 +69,48 @@ export class UserRepository {
         },
       },
     });
-    if (!userWithRoles) return undefined;
-    return this.transformUser(userWithRoles);
   }
 
-  private static transformUser(userWithRoles: RawUser): User {
-    const userRoles = userWithRoles?.userRoles.map((ur) => ({
-      id: ur.role.id,
-      name: ur.role.name,
-    }));
+  async find(whereClause: SQL): Promise<User | undefined> {
+    const user: UserRoles | undefined = await this.rawFind(whereClause);
+    if (user === undefined) return undefined;
+    return this.flattenRolePermission(user);
+  }
 
-    const permissionMap = new Map();
-    userWithRoles.userRoles.forEach((ur) => {
-      ur.role.rolePermissions.forEach((rp) => {
-        permissionMap.set(rp.permission.key, {
-          id: rp.permission.id,
-          key: rp.permission.key,
-          name: rp.permission.name,
-        });
+  async baseFind(whereClause: SQL): Promise<BaseUser | undefined> {
+    return await db.query.users.findFirst({
+      where: whereClause,
+      columns: {
+        id: true,
+        name: true,
+        email: true,
+        password: false,
+      },
+    });
+  }
+
+  flattenRolePermission(user: UserRoles): User {
+    const rolesArray: Role[] = [];
+    const permissionsMap = new Map<number, Permission>();
+    user.userRoles.forEach((ur) => {
+      const role = ur.role;
+      rolesArray.push({ id: role.id, name: role.name });
+      role.rolePermissions.forEach((rp) => {
+        const p = rp.permission;
+        if (!permissionsMap.has(p.id)) {
+          permissionsMap.set(p.id, { id: p.id, key: p.key, name: p.name });
+        }
       });
     });
-
-    const userPermissions = Array.from(permissionMap.values());
-
+    const permissionsArray = Array.from(permissionsMap.values());
     return {
-      id: userWithRoles.id,
-      name: userWithRoles.name,
-      email: userWithRoles.email,
-      password: userWithRoles.password,
-      roles: userRoles,
-      permissions: userPermissions,
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      roles: rolesArray,
+      permissions: permissionsArray,
     };
   }
-
-  /**
-   * Check if user has specific permission
-   */
-  static hasPermission(user: User, permissionKey: string): boolean {
-    return user.permissions.some((p) => p.key === permissionKey);
-  }
-
-  /**
-   * Check if user has multiple permissions (AND logic)
-   */
-  static hasAllPermissions(user: User, permissionKeys: string[]): boolean {
-    const userPermissionKeys = new Set(user.permissions.map((p) => p.key));
-    return permissionKeys.every((key) => userPermissionKeys.has(key));
-  }
-
-  /**
-   * Check if user has any of the specified permissions (OR logic)
-   */
-  static hasAnyPermission(user: User, permissionKeys: string[]): boolean {
-    const userPermissionKeys = new Set(user.permissions.map((p) => p.key));
-    return permissionKeys.some((key) => userPermissionKeys.has(key));
-  }
-
-  /**
-   * Check if user has specific role
-   */
-  static hasRole(user: User, roleName: string): boolean {
-    return user.roles.some((r) => r.name === roleName);
-  }
-
-  /**
-   * Check if user has any of the specified roles
-   */
-  static hasAnyRole(user: User, roleNames: string[]): boolean {
-    const userRoleNames = new Set(user.roles.map((r) => r.name));
-    return roleNames.some((name) => userRoleNames.has(name));
-  }
-
-  /**
-   * Get all permissions keys for user
-   */
-  static getPermissionKeys(user: User): string[] {
-    return user.permissions.map((p) => p.key);
-  }
-
-  /**
-   * Get all role names for user
-   */
-  static getRoleNames(user: User): string[] {
-    return user.roles.map((r) => r.name);
-  }
 }
+
+export const userRepository = new UserRepository();

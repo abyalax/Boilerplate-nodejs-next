@@ -1,85 +1,101 @@
-import { roles, permissions, rolePermissions, users, userRoles } from './schema';
-import * as bcrypt from 'bcrypt';
+import * as schema from './schema';
+import bcrypt from 'bcrypt';
 import { db } from '.';
 
 async function main() {
-  console.log('Starting RBAC seeder...');
+  console.log('⚡ Seeding deterministic roles/permissions...');
 
-  // 1. Insert Roles
-  console.log('📝 Inserting roles...');
-  const rolesData = [
-    { id: 1, name: 'Admin' },
-    { id: 2, name: 'User' },
-  ];
-
-  await db.insert(roles).values(rolesData);
-
-  // 2. Insert Permissions
-  console.log('🔐 Inserting permissions...');
-  const permissionsData = [
-    { id: 1, key: 'create:user', name: 'Create User' },
-    { id: 2, key: 'update:user', name: 'Update User' },
-    { id: 3, key: 'delete:user', name: 'Delete User' },
-    { id: 4, key: 'read:user', name: 'Read User' },
-  ];
-
-  await db.insert(permissions).values(permissionsData);
-
-  // 3. Assign Permissions to Admin Role
-  console.log('🔗 Assigning permissions to Admin role...');
-  const adminPermissions = [
-    { roleId: 1, permissionId: 1 }, // create:user
-    { roleId: 1, permissionId: 2 }, // update:user
-    { roleId: 1, permissionId: 3 }, // delete:user
-    { roleId: 1, permissionId: 4 }, // read:user
-  ];
-
-  await db.insert(rolePermissions).values(adminPermissions);
-
-  // 4. Insert Sample Users
-  console.log('👥 Inserting sample users...');
-  const hashedPassword = bcrypt.hashSync('password', 10);
-  const usersData = [
-    {
-      id: 1,
-      name: 'John Admin',
-      password: hashedPassword,
-      email: 'john@gmail.com',
-    },
-    {
-      id: 2,
-      name: 'Jane User',
-      password: hashedPassword,
-      email: 'jane@gmail.com',
-    },
-  ];
-
-  await db.insert(users).values(usersData);
-
-  // 5. Assign Roles to Users
-  console.log('👤 Assigning roles to users...');
-  const userRoleAssignments = [
-    { userId: 1, roleId: 1 }, // John -> Admin
-    { userId: 2, roleId: 2 }, // Jane -> User
-  ];
-
-  await db.insert(userRoles).values(userRoleAssignments);
-
-  console.log('✅ RBAC seeder completed successfully!');
-  console.log(`
-📊 Summary:
-- Roles: Admin (full permissions), User (no permissions)
-- Permissions: create:user, update:user, delete:user, read:user
-- Users: John (Admin), Jane (User)
+  // reset data agar id diulang dari 1
+  await db.execute(`
+    TRUNCATE TABLE 
+      "role_permissions",
+      "user_roles",
+      "users",
+      "permissions",
+      "roles"
+    RESTART IDENTITY CASCADE;
   `);
-}
 
+  // --- insert roles ---
+  const insertedRoles = await db
+    .insert(schema.roles)
+    .values([{ name: 'Customer' }, { name: 'Client Admin' }, { name: 'System Admin' }])
+    .returning();
+
+  const roleIds = Object.fromEntries(insertedRoles.map((r) => [r.name, r.id]));
+
+  // --- insert permissions ---
+  const insertedPermissions = await db
+    .insert(schema.permissions)
+    .values([
+      { key: 'customer:read_profile', name: 'Customer Read Profile' },
+      { key: 'customer:create_order', name: 'Customer Create Order' },
+      { key: 'customer:read_order', name: 'Customer Read Order' },
+      { key: 'customer:update_order', name: 'Customer Update Order' },
+      { key: 'customer:delete_order', name: 'Customer Delete Order' },
+
+      { key: 'customer:create', name: 'Create Customer' },
+      { key: 'customer:read', name: 'Read Customer' },
+      { key: 'customer:update', name: 'Update Customer' },
+      { key: 'customer:delete', name: 'Delete Customer' },
+      { key: 'customer:*', name: 'Manage Customer' },
+
+      { key: 'client:read', name: 'Read Client' },
+      { key: 'client:create', name: 'Create Client' },
+      { key: 'client:update', name: 'Update Client' },
+      { key: 'client:delete', name: 'Delete Client' },
+      { key: 'client:*', name: 'Manage Client' },
+    ])
+    .returning();
+
+  const permissionIds = Object.fromEntries(insertedPermissions.map((p) => [p.key, p.id]));
+
+  // --- insert users ---
+  const [cutsomerPass, clientPass, adminPass] = await Promise.all([
+    bcrypt.hash('customer_pass', 10),
+    bcrypt.hash('client_pass', 10),
+    bcrypt.hash('admin_pass', 10),
+  ]);
+
+  const insertedUsers = await db
+    .insert(schema.users)
+    .values([
+      { name: 'Customer', email: 'customer@gmail.com', password: cutsomerPass },
+      { name: 'Client Admin', email: 'client@gmail.com', password: clientPass },
+      { name: 'System Admin', email: 'admin@gmail.com', password: adminPass },
+    ])
+    .returning();
+
+  const userIds = Object.fromEntries(insertedUsers.map((u) => [u.email, u.id]));
+
+  // --- map userRoles ---
+  await db.insert(schema.userRoles).values([
+    { userId: userIds['customer@gmail.com'], roleId: roleIds['Customer'] },
+    { userId: userIds['client@gmail.com'], roleId: roleIds['Client Admin'] },
+    { userId: userIds['admin@gmail.com'], roleId: roleIds['System Admin'] },
+  ]);
+
+  // --- map rolePermissions ---
+  await db.insert(schema.rolePermissions).values([
+    { roleId: roleIds['Customer'], permissionId: permissionIds['customer:read_profile'] },
+    { roleId: roleIds['Customer'], permissionId: permissionIds['customer:create_order'] },
+    { roleId: roleIds['Customer'], permissionId: permissionIds['customer:update_order'] },
+    { roleId: roleIds['Customer'], permissionId: permissionIds['customer:delete_order'] },
+
+    { roleId: roleIds['Client Admin'], permissionId: permissionIds['customer:*'] },
+
+    { roleId: roleIds['System Admin'], permissionId: permissionIds['customer:*'] },
+    { roleId: roleIds['System Admin'], permissionId: permissionIds['client:*'] },
+  ]);
+
+  console.log('✅ Seeding User roles/permissions done!');
+}
 main()
-  .then(() => {
-    console.log('🎉 Seeder finished');
+  .then(async () => {
+    console.log('✅ Seed data successfully created');
     process.exit(0);
   })
-  .catch((err) => {
-    console.error('❌ Seeder failed:', err);
+  .catch(async (e) => {
+    console.error(e);
     process.exit(1);
   });

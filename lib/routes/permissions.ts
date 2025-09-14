@@ -1,19 +1,39 @@
 // Auto-generated file - do not edit manually
-// Generated at: 2025-09-08T22:24:01.204Z
-
-// Base permissions directly from route files
-export const baseRoutePermissions: Record<string, string[]> = {
-  '/admin': ['read:user', 'create:user'],
-  '/admin/users': ['update:user'],
-  '/admin/users/[id]': ['delete:user'],
-  '/api/users': ['read:user', 'create:user', 'update:user'],
-} as const;
+// Generated at: 2025-09-14T04:46:09.439Z
 
 // Hierarchical permissions (includes parent route permissions)
 export const routePermissions: Record<string, string[]> = {
-  '/admin': ['read:user', 'create:user'],
-  '/admin/users': ['read:user', 'create:user', 'update:user'],
-  '/admin/users/[id]': ['read:user', 'create:user', 'update:user', 'delete:user'],
-  '/api/users': ['read:user', 'create:user', 'update:user'],
-  '/admin/users/:id': ['read:user', 'create:user', 'update:user', 'delete:user'],
+  '/backoffice': ['client:read', 'customer:read'],
+  '/[clientId]': ['customer:read'],
+  '/backoffice/clients': ['client:read', 'customer:read'],
+  '/[clientId]/customer': ['customer:read'],
+  '/[clientId]/admin': ['customer:read'],
+  '/backoffice/clients/[clientId]': ['client:read', 'customer:read', 'user:read'],
+  '/[clientId]/customer/orders': ['customer:read'],
+  '/[clientId]/admin/customers': ['customer:read', 'customer:delete'],
+  '/backoffice/clients/[clientId]/customers': ['client:read', 'customer:read', 'user:read', 'customer:delete'],
+  '/[clientId]/customer/orders/[orderId]': ['customer:read'],
+  '/[clientId]/customer/me/profile': ['customer:read', 'customer:read_profile'],
+  '/[clientId]/admin/customers/create': ['customer:read', 'customer:delete', 'customer:create', 'customer:update'],
+  '/[clientId]/admin/customers/[customerId]': ['customer:read', 'customer:delete', 'customer:update'],
+  '/backoffice/clients/[clientId]/customers/create': ['client:read', 'customer:read', 'user:read', 'customer:delete', 'customer:create', 'customer:update'],
+  '/backoffice/clients/[clientId]/customers/[customerId]': ['client:read', 'customer:read', 'user:read', 'customer:delete', 'customer:update'],
+  '/api/[clientId]/customers': ['customer:read', 'read:user', 'create:user', 'update:user'],
+  '/:clientId': ['customer:read'],
+  '/:clientId/customer': ['customer:read'],
+  '/:clientId/admin': ['customer:read'],
+  '/backoffice/clients/:clientId': ['client:read', 'customer:read', 'user:read'],
+  '/:clientId/customer/orders': ['customer:read'],
+  '/:clientId/admin/customers': ['customer:read', 'customer:delete'],
+  '/backoffice/clients/:clientId/customers': ['client:read', 'customer:read', 'user:read', 'customer:delete'],
+  '/:clientId/customer/orders/:orderId': ['customer:read'],
+  '/[clientId]/customer/me': ['customer:read'],
+  '/:clientId/customer/me/profile': ['customer:read', 'customer:read_profile'],
+  '/:clientId/admin/customers/create': ['customer:read', 'customer:delete', 'customer:create', 'customer:update'],
+  '/:clientId/admin/customers/:customerId': ['customer:read', 'customer:delete', 'customer:update'],
+  '/backoffice/clients/:clientId/customers/create': ['client:read', 'customer:read', 'user:read', 'customer:delete', 'customer:create', 'customer:update'],
+  '/backoffice/clients/:clientId/customers/:customerId': ['client:read', 'customer:read', 'user:read', 'customer:delete', 'customer:update'],
+  '/api': ['customer:read'],
+  '/api/[clientId]': ['customer:read'],
+  '/api/:clientId/customers': ['customer:read', 'read:user', 'create:user', 'update:user'],
 } as const;

@@ -1,6 +1,7 @@
 import { glob } from 'glob';
 import path from 'path';
 import fs from 'fs';
+import chokidar from 'chokidar';
 
 async function generateRoutePermissions() {
   const basePermissions: Record<string, string[]> = {};
@@ -17,7 +18,6 @@ async function generateRoutePermissions() {
   });
 
   const allFiles = [...pageFiles, ...routeFiles];
-
   console.log(`Found ${pageFiles.length} page files and ${routeFiles.length} route files`);
 
   // Step 1: Collect base permissions from files
@@ -94,9 +94,7 @@ async function generateRoutePermissions() {
       }
     }
 
-    if (collected.length > 0) {
-      hierarchicalPermissions[routePath] = [...new Set(collected)];
-    }
+    if (collected.length > 0) hierarchicalPermissions[routePath] = [...new Set(collected)];
   }
 
   // Step 4: Generate output with both base and hierarchical permissions
@@ -104,9 +102,6 @@ async function generateRoutePermissions() {
   const outputContent = `
 // Auto-generated file - do not edit manually
 // Generated at: ${new Date().toISOString()}
-
-// Base permissions directly from route files
-export const baseRoutePermissions: Record<string, string[]> = ${JSON.stringify(basePermissions, null, 2)} as const;
 
 // Hierarchical permissions (includes parent route permissions)
 export const routePermissions: Record<string, string[]> = ${JSON.stringify(hierarchicalPermissions, null, 2)} as const;
@@ -127,56 +122,55 @@ export const routePermissions: Record<string, string[]> = ${JSON.stringify(hiera
 function matchesDynamicRoute(pathname: string, routePattern: string): boolean {
   const pathSegments = pathname.split('/').filter(Boolean);
   const routeSegments = routePattern.split('/').filter(Boolean);
-
   // Handle catch-all routes [...slug]
   if (routePattern.includes('[...')) {
     const beforeCatchAll = routeSegments.findIndex((seg) => seg.includes('[...'));
     const staticParts = routeSegments.slice(0, beforeCatchAll);
-
     return pathSegments.length >= staticParts.length && staticParts.every((seg, i) => seg.includes('[') || seg === pathSegments[i]);
   }
-
   // Handle regular dynamic routes [id]
   if (pathSegments.length !== routeSegments.length) return false;
-
   return routeSegments.every((seg, i) => seg.includes('[') || seg === pathSegments[i]);
 }
 
-function watchForChanges(): void {
+export function watchForChanges(): void {
   const appDir = path.join(process.cwd(), 'app');
+  const DEBOUNCE_TIME = 1000;
   let timeout: NodeJS.Timeout | null = null;
-  const DEBOUNCE_TIME = 500;
   const debouncedRegenerate = () => {
     if (timeout) clearTimeout(timeout);
     timeout = setTimeout(async () => {
+      console.log('🔃 Regenerating route permissions...');
       await generateRoutePermissions();
     }, DEBOUNCE_TIME);
   };
-  const watcher = fs.watch(appDir, { recursive: true }, (eventType, filename) => {
-    if (!filename) return;
-    if ((filename.includes('page.') || filename.includes('route.')) && (filename.endsWith('.ts') || filename.endsWith('.tsx'))) {
-      console.log(`\n🔃 ${eventType} detected: ${filename}`);
-      debouncedRegenerate();
+  const watcher = chokidar.watch(appDir, {
+    ignored: /node_modules|(^|\/)\.[^/]+/, // ignore folder yang berat dan hidden
+    persistent: true,
+    ignoreInitial: true, // jangan trigger event saat start
+  });
+  watcher.on('all', (event, filePath) => {
+    if (filePath.endsWith('.ts') || filePath.endsWith('.tsx')) {
+      if (filePath.includes('page.') || filePath.includes('route.')) {
+        console.log(`🔔 ${event} detected: ${filePath}`);
+        debouncedRegenerate();
+      }
     }
   });
 
-  watcher.on('error', (error: Error) => {
+  watcher.on('error', (error) => {
     console.error('❌ Watcher error:', error);
   });
 
-  process.on('SIGINT', () => {
+  const stopWatcher = () => {
     console.log('\n🛑 Stopping watcher...');
     if (timeout) clearTimeout(timeout);
     watcher.close();
     process.exit(0);
-  });
+  };
 
-  process.on('SIGTERM', () => {
-    console.log('\n🛑 Stopping watcher...');
-    if (timeout) clearTimeout(timeout);
-    watcher.close();
-    process.exit(0);
-  });
+  process.on('SIGINT', stopWatcher);
+  process.on('SIGTERM', stopWatcher);
 }
 
 async function main() {
