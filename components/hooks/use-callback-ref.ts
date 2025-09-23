@@ -1,9 +1,8 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useEffect, useMemo, useRef } from "react";
 
-import { useEffect, useMemo, useRef } from 'react';
-
-export function useCallbackRef<T extends (...args: any[]) => any>(callback: T | undefined): T {
+export function useCallbackRef<T extends (...args: unknown[]) => unknown>(
+  callback: T | undefined,
+): T {
   const callbackRef = useRef(callback);
 
   useEffect(() => {

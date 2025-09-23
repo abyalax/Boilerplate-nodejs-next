@@ -1,15 +1,18 @@
-import { Navbar } from '~/components/ui/navbar';
-import { ReactNode } from 'react';
-import { navigationAdmin } from '../navigation';
+import { ReactNode } from "react";
+
+import { Footer } from "~/components/ui/footer";
+import { SidebarProvider } from "~/components/ui/sidebar";
+
+import { AppSidebar } from "../_components/ui/app-sidebar";
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar navigation={navigationAdmin} />
-      <main className="flex-1 p-4">{children}</main>
-      <footer className="border-t py-6 text-center text-sm text-muted-foreground">
-        <p>© {new Date().getFullYear()} Next Boilerplate. All rights reserved.</p>
-      </footer>
-    </div>
+    <SidebarProvider>
+      <AppSidebar />
+      <main style={{ width: "100%" }}>
+        <section className="min-h-[90vh]">{children}</section>
+        <Footer />
+      </main>
+    </SidebarProvider>
   );
 }

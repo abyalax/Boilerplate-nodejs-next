@@ -72,7 +72,7 @@ RBAC di proyek ini berbasis NextAuth (JWT) + middleware App Router:
   Setiap file `app/**/page.tsx` atau `app/**/route.ts` bisa mengekspor
 
   ```ts
-  export const permissions = ["read:user", "create:user"...]`.
+  export const permissions = [PERMISSIONS.CUSTOMER.READ, ...]`.
   ```
 
 - **Auto-generate path permissions**:
@@ -102,7 +102,7 @@ RBAC di proyek ini berbasis NextAuth (JWT) + middleware App Router:
 
    ```ts
    // app/admin/page.tsx
-   export const permissions = ["read:user", "create:user"]; // halaman ini butuh keduanya
+   export const permissions = [PERMISSIONS.CUSTOMER.READ, PERMISSIONS.CUSTOMER.UPDATE ]`. // halaman ini butuh keduanya
 
    export default function Page() {
    return <div>Admin</div>;
@@ -113,12 +113,15 @@ RBAC di proyek ini berbasis NextAuth (JWT) + middleware App Router:
 
 ```ts
 // app/api/users/route.ts
-import { NextResponse } from 'next/server';
-import { safeHandler } from '~/lib/handler/safe-handler';
+import { NextResponse } from "next/server";
+import { safeHandler } from "~/lib/handler/safe-handler";
 
 // example guard permissions, but does'nt support per method security
 // all handler will be protected to this permission
-export const permissions = ['read:user', 'create:user', 'update:user'];
+export const permissions = [
+  PERMISSIONS.CUSTOMER.READ,
+  PERMISSIONS.CUSTOMER.UPDATE,
+];
 
 export const GET = safeHandler(async () => {
   const data = await db
@@ -128,9 +131,9 @@ export const GET = safeHandler(async () => {
       email: users.email,
     })
     .from(users);
-  return NextResponse.json({ message: 'Success Get Data User', data: data });
+  return NextResponse.json({ message: "Success Get Data User", data: data });
   // return 403 if doesn't have this permission
-}, ['something:permission']);
+}, ["something:permission"]);
 ```
 
 4. Atur public route (opsional)
@@ -138,7 +141,7 @@ export const GET = safeHandler(async () => {
 Secara default, `middleware.ts` mengizinkan akses tanpa login ke:
 
 ```ts
-const publicRoutes = ['/', '/auth/register', '/auth/login'];
+const publicRoutes = ["/", "/auth/register", "/auth/login"];
 ```
 
 Tambahkan path lain ke `publicRoutes` di `middleware.ts` jika dibutuhkan.

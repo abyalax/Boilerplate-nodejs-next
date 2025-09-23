@@ -1,22 +1,24 @@
-import type { TAxiosResponse, TResponse } from '~/common/types/response';
-import { useMutation, UseMutationResult } from '@tanstack/react-query';
-import { MUTATION_KEY } from '~/common/const/mutationkey';
-import { createCustomer } from '~/modules/customers/users.api';
-import { QUERY_KEY } from '~/common/const/querykey';
-import { CreateUser, User } from '~/db/schema';
-import { toast } from 'react-toastify';
+import { useMutation } from "@tanstack/react-query";
+import { AxiosError } from "axios";
+import { toast } from "react-toastify";
 
-export const useCreateClient = (): UseMutationResult<TAxiosResponse<User>, TResponse, CreateUser, unknown> => {
+import { QUERY_KEY } from "~/common/const/querykey";
+import { TResponse } from "~/common/types/response";
+import { CreateUser } from "~/db/schema";
+import { createClient } from "~/modules/clients/client.api";
+
+export const useCreateClient = () => {
   return useMutation({
-    mutationKey: [MUTATION_KEY.PRODUCT.CREATE],
-    mutationFn: async (payload) => await createCustomer(payload),
-    meta: { invalidateQueries: [QUERY_KEY.USERS.GET_ALL] },
+    mutationKey: [QUERY_KEY.CLIENT.CREATE],
+    mutationFn: async (payload: CreateUser) => await createClient(payload),
+    meta: { invalidateQueries: [QUERY_KEY.CLIENT.GETS] },
     onSuccess: () => {
-      toast.success('Successfully created users');
+      toast.success("Successfully create client");
     },
-    onError: (error) => {
-      console.log('useCreateProduct error : ', error);
-      toast.error('Failed to create users');
+    onError: (error: AxiosError<TResponse>) => {
+      const message = error.response?.data.message ?? "Failed to create client";
+      console.log("useCreateClient error : ", error);
+      toast.error(message);
     },
   });
 };

@@ -1,11 +1,12 @@
-'use client';
+"use client";
 
-import { useParams } from 'next/navigation';
-import { useGetClientByID } from '../../_hooks/use-get-client-by-id';
+import { useParams } from "next/navigation";
+
+import { useGetClientByID } from "../../_hooks/use-get-client-by-id";
 
 export const PageAdminClient = () => {
   const { id } = useParams<{ id: string }>();
-  const { data } = useGetClientByID({ id });
+  const { data } = useGetClientByID(id);
   return (
     <div>
       <h1>Detail User</h1>

@@ -1,17 +1,28 @@
-import { BaseUser, CreateUser, Permission, Role, UpdateUser, User, UserRoles, userRoles, users } from '~/db/schema';
-import { UnprocessableEntity } from '~/lib/handler/error';
-import { eq, SQL } from 'drizzle-orm';
-import * as bcrypt from 'bcrypt';
-import { db } from '~/db';
+import * as bcrypt from "bcrypt";
+import { eq, SQL } from "drizzle-orm";
 
-class UserRepository {
+import { db } from "~/db";
+import {
+  BaseUser,
+  CreateUser,
+  Permission,
+  Role,
+  UpdateUser,
+  User,
+  UserRoles,
+  userRoles,
+  users,
+} from "~/db/schema";
+import { UnprocessableEntity } from "~/lib/handler/error";
+
+export class UserRepository {
   async findById(id: number): Promise<User | undefined> {
-    return await this.find(eq(users.id, id));
+    return await this.findFirst(eq(users.id, id));
   }
 
   async create(user: CreateUser): Promise<BaseUser> {
     const userExist = await this.baseFind(eq(users.email, user.email));
-    if (userExist) throw new UnprocessableEntity('Email already exist');
+    if (userExist) throw new UnprocessableEntity("Email already exist");
     const hashed = await bcrypt.hash(user.password, 10);
     return await db.transaction(async (tx) => {
       const [inserted] = await tx
@@ -27,17 +38,17 @@ class UserRepository {
         userId: inserted.id,
         roleId: user.roleId ?? 1,
       });
-
       return inserted;
     });
   }
 
-  async update(user: UpdateUser): Promise<BaseUser> {
+  async update(whereClause: SQL, payload: UpdateUser): Promise<BaseUser> {
     const [updated] = await db
       .update(users)
       .set({
-        ...user,
+        ...payload,
       })
+      .where(whereClause)
       .returning();
     return updated;
   }
@@ -47,7 +58,7 @@ class UserRepository {
     return deleted.rowCount !== null;
   }
 
-  async rawFind(whereClause: SQL): Promise<UserRoles | undefined> {
+  async rawFindFirst(whereClause: SQL): Promise<UserRoles | undefined> {
     return await db.query.users.findFirst({
       where: whereClause,
       with: {
@@ -71,10 +82,40 @@ class UserRepository {
     });
   }
 
-  async find(whereClause: SQL): Promise<User | undefined> {
-    const user: UserRoles | undefined = await this.rawFind(whereClause);
+  async rawFindMany(whereClause: SQL): Promise<UserRoles[] | undefined> {
+    return await db.query.users.findMany({
+      where: whereClause,
+      with: {
+        userRoles: {
+          with: {
+            role: {
+              columns: { id: true, name: true },
+              with: {
+                rolePermissions: {
+                  with: {
+                    permission: {
+                      columns: { id: true, key: true, name: true },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
+  async findFirst(whereClause: SQL): Promise<User | undefined> {
+    const user: UserRoles | undefined = await this.rawFindFirst(whereClause);
     if (user === undefined) return undefined;
     return this.flattenRolePermission(user);
+  }
+
+  async findMany(whereClause: SQL): Promise<User[] | undefined> {
+    const user: UserRoles[] | undefined = await this.rawFindMany(whereClause);
+    if (user === undefined) return undefined;
+    return user.map((u) => this.flattenRolePermission(u));
   }
 
   async baseFind(whereClause: SQL): Promise<BaseUser | undefined> {

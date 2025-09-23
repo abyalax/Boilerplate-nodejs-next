@@ -1,17 +1,12 @@
-import type { TAxiosResponse, TResponse } from '~/common/types/response';
-import { useQuery, type UseQueryOptions } from '@tanstack/react-query';
-import { QUERY_KEY, type QueryKey } from '~/common/const/querykey';
-import { getCustomerByID } from '~/modules/customers/users.api';
-import { User } from '~/db/schema';
+import { useQuery } from "@tanstack/react-query";
 
-type Result = UseQueryOptions<TAxiosResponse<User>, TResponse, User | undefined, QueryKey<{ id?: string }>[]>;
+import { QUERY_KEY } from "~/common/const/querykey";
+import { getClient } from "~/modules/clients/client.api";
 
-export const queryGetClientByID = (params: { id?: string }): Result => ({
-  queryKey: [QUERY_KEY.USERS.GET_BY_ID, params],
-  queryFn: () => getCustomerByID(params),
-  select: (data) => data.data.data,
-});
-
-export const useGetClientByID = (params: { id?: string }) => {
-  return useQuery(queryGetClientByID(params));
+export const useGetClientByID = (clientId: string) => {
+  return useQuery({
+    queryKey: [QUERY_KEY.CLIENT.GET_BY_ID],
+    queryFn: () => getClient(clientId),
+    select: (data) => data.data.data,
+  });
 };

@@ -1,9 +1,11 @@
-'use client';
+"use client";
 
-import { QueryClientProvider } from '~/components/provider/query-client';
-import { ThemeProvider } from '~/components/provider/theme';
-import { SessionProvider } from 'next-auth/react';
-import { Toaster } from '../ui/toaster';
+import { SessionProvider } from "next-auth/react";
+
+import { QueryClientProvider } from "~/components/provider/query-client";
+import { ThemeProvider } from "~/components/provider/theme";
+
+import { Toaster } from "../ui/toaster";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (

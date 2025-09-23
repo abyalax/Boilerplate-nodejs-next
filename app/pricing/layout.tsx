@@ -1,15 +1,18 @@
-import { Navbar } from '~/components/ui/navbar';
-import { ReactNode } from 'react';
-import { navigationGuest } from '../navigation';
+import { ReactNode } from "react";
+
+import { Footer } from "~/components/ui/footer";
+import { Navbar } from "~/components/ui/navbar";
+
+import { navigationGuest } from "../navigation";
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar navigation={navigationGuest} />
-      <main className="flex-1 p-4">{children}</main>
-      <footer className="border-t py-6 text-center text-sm text-muted-foreground">
-        <p>© {new Date().getFullYear()} Next Boilerplate. All rights reserved.</p>
-      </footer>
+      <main className="flex-1 p-4">
+        <section className="min-h-[80vh]">{children}</section>
+        <Footer />
+      </main>
     </div>
   );
 }

@@ -1,13 +1,27 @@
-'use client';
+"use client";
 
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '~/components/ui/form';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select';
-import { useCreateClient } from '~/app/backoffice/clients/_hooks/use-create-client';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from '~/components/ui/button';
-import { userInsertSchema } from '~/db/schema';
-import { Input } from '~/components/ui/input';
-import { useForm } from 'react-hook-form';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+
+import { useCreateClient } from "~/app/backoffice/clients/_hooks/use-create-client";
+import { Button } from "~/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "~/components/ui/form";
+import { Input } from "~/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
+import { userInsertSchema } from "~/db/schema";
 
 export function FormUpdateCustomerClient() {
   const { mutate: createCustomer } = useCreateClient();
@@ -15,9 +29,9 @@ export function FormUpdateCustomerClient() {
   const form = useForm({
     resolver: zodResolver(userInsertSchema),
     defaultValues: {
-      name: '',
-      email: '',
-      password: '',
+      name: "",
+      email: "",
+      password: "",
       roleId: 1,
     },
   });
@@ -50,7 +64,11 @@ export function FormUpdateCustomerClient() {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input type="email" placeholder="Enter email address" {...field} />
+                <Input
+                  type="email"
+                  placeholder="Enter email address"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -64,7 +82,11 @@ export function FormUpdateCustomerClient() {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="Enter password" {...field} />
+                <Input
+                  type="password"
+                  placeholder="Enter password"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -77,7 +99,11 @@ export function FormUpdateCustomerClient() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Roles</FormLabel>
-              <Select {...field} onValueChange={(value) => field.onChange(Number(value))} value={field.value.toString()}>
+              <Select
+                {...field}
+                onValueChange={(value) => field.onChange(Number(value))}
+                value={field.value.toString()}
+              >
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select roles" />

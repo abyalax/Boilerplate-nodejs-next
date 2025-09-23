@@ -1,14 +1,15 @@
-import { userRoles } from './user-roles.schema';
-import { serial, varchar } from 'drizzle-orm/pg-core';
-import { pgTable } from 'drizzle-orm/pg-core';
-import { Permission } from './permissions.schema';
-import { relations } from 'drizzle-orm';
-import { Role } from './roles.schema';
-import { createInsertSchema, createUpdateSchema } from 'drizzle-zod';
-import z from 'zod';
+import { relations } from "drizzle-orm";
+import { serial, varchar } from "drizzle-orm/pg-core";
+import { pgTable } from "drizzle-orm/pg-core";
+import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
+import z from "zod";
 
-export const users = pgTable('users', {
-  id: serial('id').primaryKey(),
+import { Permission } from "./permissions.schema";
+import { Role } from "./roles.schema";
+import { userRoles } from "./user-roles.schema";
+
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
   name: varchar({ length: 255 }).notNull(),
   password: varchar({ length: 255 }).notNull(),
   email: varchar({ length: 255 }).notNull().unique(),
@@ -30,12 +31,15 @@ export const userUpdateSchema = updateSchema.extend({
 
 export type CreateUser = z.infer<typeof userInsertSchema>;
 export type UpdateUser = z.infer<typeof userUpdateSchema>;
-export type BaseUser = Omit<typeof users.$inferSelect, 'password'> & { password?: string };
+
+export type BaseUser = Omit<typeof users.$inferSelect, "password"> & {
+  password?: string;
+};
 export type UserSchema = BaseUser & {
   roles: Role[];
   permissions: Permission[];
 };
-export type User = Omit<UserSchema, 'password'>;
+export type User = Omit<UserSchema, "password">;
 export type UserRoles = {
   id: number;
   name: string;

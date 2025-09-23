@@ -1,7 +1,13 @@
-import { eq } from 'drizzle-orm';
-import { users } from './schema';
-import { db } from '.';
+import { eq } from "drizzle-orm";
 
+import { db } from ".";
+import { users } from "./schema";
+
+/**
+ * This is just for playground
+ * developement query with orm drizzle
+ * run with pnpm db:query
+ */
 async function main() {
   const data = await db.query.users.findFirst({
     where: eq(users.id, 1),

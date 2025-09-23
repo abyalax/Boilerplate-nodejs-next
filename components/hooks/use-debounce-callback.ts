@@ -1,7 +1,7 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useMemo, useRef } from 'react';
-import { useCallbackRef } from './use-callback-ref';
+/** biome-ignore-all lint/suspicious/noExplicitAny: <> */
+import { useEffect, useMemo, useRef } from "react";
+
+import { useCallbackRef } from "./use-callback-ref";
 
 export interface UseDebouncedCallbackOptions {
   delay: number;
@@ -9,13 +9,20 @@ export interface UseDebouncedCallbackOptions {
   leading?: boolean;
 }
 
-export type UseDebouncedCallbackReturnValue<T extends (...args: any[]) => any> = ((...args: Parameters<T>) => void) & {
-  flush: () => void;
-  cancel: () => void;
-};
+export type UseDebouncedCallbackReturnValue<T extends (...args: any[]) => any> =
+  ((...args: Parameters<T>) => void) & {
+    flush: () => void;
+    cancel: () => void;
+  };
 
-export function useDebouncedCallback<T extends (...args: any[]) => any>(callback: T, options: number | UseDebouncedCallbackOptions) {
-  const { delay, flushOnUnmount, leading } = typeof options === 'number' ? { delay: options, flushOnUnmount: false, leading: false } : options;
+export function useDebouncedCallback<T extends (...args: any[]) => any>(
+  callback: T,
+  options: number | UseDebouncedCallbackOptions,
+) {
+  const { delay, flushOnUnmount, leading } =
+    typeof options === "number"
+      ? { delay: options, flushOnUnmount: false, leading: false }
+      : options;
 
   const handleCallback = useCallbackRef(callback);
   const debounceTimerRef = useRef(0);
@@ -54,7 +61,10 @@ export function useDebouncedCallback<T extends (...args: any[]) => any>(callback
 
           currentCallback.flush = flush;
           currentCallback.cancel = cancel;
-          debounceTimerRef.current = window.setTimeout(resetLeadingState, delay);
+          debounceTimerRef.current = window.setTimeout(
+            resetLeadingState,
+            delay,
+          );
           return;
         }
 
@@ -76,7 +86,10 @@ export function useDebouncedCallback<T extends (...args: any[]) => any>(callback
           const resetLeadingState = () => {
             clearTimeoutAndLeadingRef();
           };
-          debounceTimerRef.current = window.setTimeout(resetLeadingState, delay);
+          debounceTimerRef.current = window.setTimeout(
+            resetLeadingState,
+            delay,
+          );
           return;
         }
 

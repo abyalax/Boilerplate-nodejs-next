@@ -1,8 +1,9 @@
-import { Message, type TResponse } from '~/common/types/response';
-import type { AxiosError, AxiosRequestConfig } from 'axios';
-import { redirect } from 'next/navigation';
-import axios from 'axios';
-import { toast } from 'react-toastify';
+import type { AxiosError, AxiosRequestConfig } from "axios";
+import axios from "axios";
+import { redirect } from "next/navigation";
+import { toast } from "react-toastify";
+
+import { Message, type TResponse } from "~/common/types/response";
 
 export const axiosRequest: AxiosRequestConfig = {
   baseURL: process.env.NEXT_PUBLIC_BASE_URL_API,
@@ -29,11 +30,11 @@ api.interceptors.response.use(
         toast.error(response.message);
         hasShownAuthToast = true;
       }
-      redirect('/auth/login');
+      redirect("/auth/login");
     }
-    console.log('interceptors:  ', { error });
+    console.log("interceptors:  ", { error });
     if (error.status === 401 || error.status === 403) {
-      redirect('/auth/login');
+      redirect("/auth/login");
     }
 
     return Promise.reject(error);

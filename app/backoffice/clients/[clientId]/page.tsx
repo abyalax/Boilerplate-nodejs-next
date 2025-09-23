@@ -1,7 +1,30 @@
-import { PageAdminClient } from './_components/page-admin-client';
+import { PERMISSIONS } from "~/common/const/permission";
+import { PageScreen } from "~/components/layouts/page";
 
-export const permissions = ['user:read'];
+export const permissions = [PERMISSIONS.CLIENT.READ];
 
-export default function Page() {
-  return <PageAdminClient />;
+const breadcrumbItems = (clientId: string) => [
+  {
+    title: "Home",
+    url: "/",
+    active: false,
+  },
+  {
+    title: "Dashboard",
+    url: `/backoffice`,
+    active: false,
+  },
+  {
+    title: "Client",
+    url: `/backoffice/clients/${clientId}`,
+    active: true,
+  },
+];
+
+type Props = PageProps<"/backoffice/clients/[clientId]">;
+
+export default async function Page({ params }: Props) {
+  const { clientId } = await params;
+  const breadcrumbs = breadcrumbItems(clientId);
+  return <PageScreen title="Home Client Admin" breadcrumbs={breadcrumbs} />;
 }
