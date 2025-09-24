@@ -43,3 +43,13 @@ export const convertCamelToTitleCase = (text: string | undefined) => {
   const result = text.replace(/([A-Z])/g, ' $1');
   return result.charAt(0).toUpperCase() + result.slice(1);
 };
+
+export const formatCurrency = (value: string) => {
+  if (!value) return '';
+  // Langsung format string sebagai integer
+  const intValue = parseInt(value, 10);
+  return new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+  }).format(intValue);
+};

@@ -1,11 +1,12 @@
 // Auto-generated file - do not edit manually
-// Generated at: 2025-09-24T11:57:52.128Z
+// Generated at: 2025-09-24T15:00:51.473Z
 
 // Hierarchical permissions (includes parent route permissions)
 export const routePermissions: Record<string, string[]> = {
   '/': [],
   '/pricing': [],
   '/order': [],
+  '/charts': [],
   '/backoffice': ['client:read'],
   '/[clientId]': ['customer:read_profile'],
   '/backoffice/clients': ['client:read'],
@@ -17,9 +18,9 @@ export const routePermissions: Record<string, string[]> = {
   '/[clientId]/admin': ['customer:read_profile', 'customer:read'],
   '/backoffice/clients/create': ['client:read'],
   '/backoffice/clients/[clientId]': ['client:read'],
-  '/[clientId]/customer/orders': ['customer:read_profile', 'customer:read'],
   '/[clientId]/auth/register': ['customer:read_profile'],
   '/[clientId]/auth/login': ['customer:read_profile'],
+  '/[clientId]/customer/orders': ['customer:read_profile', 'customer:read'],
   '/[clientId]/admin/customers': ['customer:read_profile', 'customer:read', 'customer:delete'],
   '/backoffice/clients/[clientId]/customers': ['client:read', 'customer:read', 'customer:delete'],
   '/[clientId]/customer/orders/[orderId]': ['customer:read_profile', 'customer:read'],
@@ -41,10 +42,10 @@ export const routePermissions: Record<string, string[]> = {
   '/:clientId/customer': ['customer:read_profile'],
   '/:clientId/admin': ['customer:read_profile', 'customer:read'],
   '/backoffice/clients/:clientId': ['client:read'],
-  '/:clientId/customer/orders': ['customer:read_profile', 'customer:read'],
   '/[clientId]/auth': ['customer:read_profile'],
   '/:clientId/auth/register': ['customer:read_profile'],
   '/:clientId/auth/login': ['customer:read_profile'],
+  '/:clientId/customer/orders': ['customer:read_profile', 'customer:read'],
   '/:clientId/admin/customers': ['customer:read_profile', 'customer:read', 'customer:delete'],
   '/backoffice/clients/:clientId/customers': ['client:read', 'customer:read', 'customer:delete'],
   '/:clientId/customer/orders/:orderId': ['customer:read_profile', 'customer:read'],
