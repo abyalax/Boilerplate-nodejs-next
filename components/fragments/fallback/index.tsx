@@ -1,19 +1,14 @@
-import { CSSProperties, FC } from "react";
-import { cn } from "~/lib/utils";
+import { CSSProperties, FC } from 'react';
+import { cn } from '~/lib/utils';
 
 interface FallbackProps {
-  width?: CSSProperties["width"];
-  height?: CSSProperties["height"];
+  width?: CSSProperties['width'];
+  height?: CSSProperties['height'];
   className?: string;
   style?: CSSProperties;
 }
 
-export const FallBack: FC<FallbackProps> = ({
-  width = "100%",
-  height = "100%",
-  className = "",
-  style,
-}) => {
+export const FallBack: FC<FallbackProps> = ({ width = '100%', height = '100%', className = '', style }) => {
   const containerStyle = {
     width,
     height,
@@ -22,13 +17,7 @@ export const FallBack: FC<FallbackProps> = ({
   };
 
   return (
-    <div
-      className={cn(
-        "flex items-center justify-center bg-background",
-        className,
-      )}
-      style={containerStyle}
-    >
+    <div className={cn('flex items-center justify-center bg-background', className)} style={containerStyle}>
       <div className="flex flex-col items-center space-y-6">
         {/* Main Loading Spinner */}
         <div className="relative">

@@ -1,11 +1,11 @@
-import { relations } from "drizzle-orm";
-import { pgTable } from "drizzle-orm/pg-core";
-import { serial, varchar } from "drizzle-orm/pg-core";
+import { relations } from 'drizzle-orm';
+import { pgTable } from 'drizzle-orm/pg-core';
+import { serial, varchar } from 'drizzle-orm/pg-core';
 
-import { rolePermissions } from "./role-permissions.schema";
+import { rolePermissions } from './role-permissions.schema';
 
-export const permissions = pgTable("permissions", {
-  id: serial("id").primaryKey(),
+export const permissions = pgTable('permissions', {
+  id: serial('id').primaryKey(),
   key: varchar({ length: 100 }).notNull().unique(),
   name: varchar({ length: 100 }).notNull(),
 });

@@ -1,12 +1,11 @@
-import { Metadata } from "next";
+import { Metadata } from 'next';
 
-import { PagePricing } from "./_components/page-pricing";
+import { PagePricing } from './_components/page-pricing';
 
 export const metadata: Metadata = {
-  title: "Pricing | Next Boilerplate",
-  description:
-    "Welcome to your personalized dashboard. Access all your important information and features.",
-  keywords: "pricing, dashboard, home, overview, user panel",
+  title: 'Pricing | Next Boilerplate',
+  description: 'Welcome to your personalized dashboard. Access all your important information and features.',
+  keywords: 'pricing, dashboard, home, overview, user panel',
 };
 
 export const permissions = [];

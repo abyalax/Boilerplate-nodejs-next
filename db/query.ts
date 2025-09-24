@@ -1,7 +1,7 @@
-import { eq } from "drizzle-orm";
+import { eq } from 'drizzle-orm';
 
-import { db } from ".";
-import { users } from "./schema";
+import { db } from '.';
+import { users } from './schema';
 
 /**
  * This is just for playground

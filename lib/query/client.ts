@@ -1,10 +1,4 @@
-import {
-  defaultShouldDehydrateQuery,
-  isServer,
-  MutationCache,
-  QueryClient,
-  QueryClientConfig,
-} from "@tanstack/react-query";
+import { defaultShouldDehydrateQuery, isServer, MutationCache, QueryClient, QueryClientConfig } from '@tanstack/react-query';
 
 let browserQueryClient: QueryClient | undefined;
 
@@ -22,7 +16,7 @@ const makeQueryClient = (config?: QueryClientConfig) =>
     mutationCache: new MutationCache({
       onSuccess: (_data, _variables, _context, mutation) => {
         if (mutation.meta?.invalidateQueries) {
-          console.log("invalidateQueries: ", mutation.meta.invalidateQueries);
+          console.log('invalidateQueries: ', mutation.meta.invalidateQueries);
           browserQueryClient?.invalidateQueries({
             queryKey: mutation.meta.invalidateQueries,
           });

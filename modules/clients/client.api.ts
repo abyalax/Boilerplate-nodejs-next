@@ -1,41 +1,26 @@
-import { MetaRequest, MetaResponse } from "~/common/types/meta";
-import { TAxiosResponse } from "~/common/types/response";
-import { api } from "~/lib/axios/api";
+import { MetaRequest, MetaResponse } from '~/common/types/meta';
+import { TAxiosResponse } from '~/common/types/response';
+import { api } from '~/lib/axios/api';
 
-import {
-  CreateUser,
-  UpdateUser,
-  User,
-} from "../../db/schema/users/users.schema";
+import { CreateUser, UpdateUser, User } from '../../db/schema/users/users.schema';
 
-export const getClients = async (
-  params: MetaRequest,
-): Promise<TAxiosResponse<{ data: User[]; meta: MetaResponse }>> => {
+export const getClients = async (params: MetaRequest): Promise<TAxiosResponse<{ data: User[]; meta: MetaResponse }>> => {
   // await new Promise((resolve) => setTimeout(resolve, 2000));
   return api.get(`/backoffice/clients`, { params });
 };
 
-export const getClient = async (
-  clientId: string,
-): Promise<TAxiosResponse<User[]>> => {
+export const getClient = async (clientId: string): Promise<TAxiosResponse<User[]>> => {
   return api.get(`/backoffice/clients/${clientId}`);
 };
 
-export const createClient = async (
-  payload: CreateUser,
-): Promise<TAxiosResponse<User>> => {
+export const createClient = async (payload: CreateUser): Promise<TAxiosResponse<User>> => {
   return api.post(`/backoffice/clients`, { ...payload });
 };
 
-export const updateClient = async (
-  clientId: string,
-  payload: UpdateUser,
-): Promise<TAxiosResponse<User>> => {
+export const updateClient = async (clientId: string, payload: UpdateUser): Promise<TAxiosResponse<User>> => {
   return api.put(`/backoffice/clients/${clientId}`, { ...payload });
 };
 
-export const deleteClient = async (
-  clientId: string,
-): Promise<TAxiosResponse<boolean>> => {
+export const deleteClient = async (clientId: string): Promise<TAxiosResponse<boolean>> => {
   return api.delete(`/backoffice/clients/${clientId}`);
 };

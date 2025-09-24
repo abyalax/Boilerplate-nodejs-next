@@ -1,9 +1,9 @@
-import jwt from "jsonwebtoken";
-import { NextRequest, NextResponse } from "next/server";
+import jwt from 'jsonwebtoken';
+import { NextRequest, NextResponse } from 'next/server';
 
-import { env } from "~/common/const/credential";
-import { safeHandler } from "~/lib/handler/safe-handler";
-import { transport } from "~/lib/mail/transport";
+import { env } from '~/common/const/credential';
+import { safeHandler } from '~/lib/handler/safe-handler';
+import { transport } from '~/lib/mail/transport';
 
 export const POST = safeHandler(async (req: NextRequest) => {
   const { email } = await req.json();
@@ -12,7 +12,7 @@ export const POST = safeHandler(async (req: NextRequest) => {
 
   console.log(email);
 
-  const expiresIn = "5m";
+  const expiresIn = '5m';
   const token = jwt.sign({ email }, env.JWT_SECRET, { expiresIn });
   const resetLink = `${env.BASE_URL}/auth/reset-password?token=${token}`;
 
@@ -30,21 +30,15 @@ export const POST = safeHandler(async (req: NextRequest) => {
   const send = await transport.sendMail({
     from: `"Abya's Team" <${process.env.EMAIL_APPS}>`,
     to: email,
-    subject: "Reset Password",
+    subject: 'Reset Password',
     html,
   });
 
-  if (send.response.includes("250 2.0.0 OK")) {
-    console.log("success send mail for: ", send.envelope);
-    return NextResponse.json(
-      { message: "Success Send Reset Password" },
-      { status: 200 },
-    );
+  if (send.response.includes('250 2.0.0 OK')) {
+    console.log('success send mail for: ', send.envelope);
+    return NextResponse.json({ message: 'Success Send Reset Password' }, { status: 200 });
   } else {
-    console.log("error send mail: ", send);
-    return NextResponse.json(
-      { message: "Failed Send Reset Password" },
-      { status: 500 },
-    );
+    console.log('error send mail: ', send);
+    return NextResponse.json({ message: 'Failed Send Reset Password' }, { status: 500 });
   }
 });

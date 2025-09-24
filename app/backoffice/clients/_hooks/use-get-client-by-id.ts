@@ -1,7 +1,7 @@
-import { queryOptions, useQuery } from "@tanstack/react-query";
+import { queryOptions, useQuery } from '@tanstack/react-query';
 
-import { QUERY_KEY } from "~/common/const/querykey";
-import { getClient } from "~/modules/clients/client.api";
+import { QUERY_KEY } from '~/common/const/querykey';
+import { getClient } from '~/modules/clients/client.api';
 
 export const queryGetClientByID = (clientId: string) =>
   queryOptions({

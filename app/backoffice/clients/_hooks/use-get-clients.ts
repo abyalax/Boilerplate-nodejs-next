@@ -1,8 +1,8 @@
-import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { queryOptions, useSuspenseQuery } from '@tanstack/react-query';
 
-import { QUERY_KEY } from "~/common/const/querykey";
-import { MetaRequest } from "~/common/types/meta";
-import { getClients } from "~/modules/clients/client.api";
+import { QUERY_KEY } from '~/common/const/querykey';
+import { MetaRequest } from '~/common/types/meta';
+import { getClients } from '~/modules/clients/client.api';
 
 export const queryGetClients = (params: MetaRequest) =>
   queryOptions({

@@ -1,6 +1,6 @@
-import { ReactNode } from "react";
+import { ReactNode } from 'react';
 
-import { Navbar } from "~/components/ui/navbar";
+import { Navbar } from '~/components/ui/navbar';
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
@@ -10,9 +10,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         <div className="w-full max-w-md">{children}</div>
       </main>
       <footer className="border-t py-6 text-center text-sm text-muted-foreground">
-        <p>
-          © {new Date().getFullYear()} Next Boilerplate. All rights reserved.
-        </p>
+        <p>© {new Date().getFullYear()} Next Boilerplate. All rights reserved.</p>
       </footer>
     </div>
   );

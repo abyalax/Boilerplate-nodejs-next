@@ -1,27 +1,20 @@
-"use client";
+'use client';
 
-import { FC, Fragment, PropsWithChildren } from "react";
+import { FC, Fragment, PropsWithChildren } from 'react';
 
-import {
-  BreadcrumbProps,
-  Breadcrumbs,
-} from "~/app/_components/ui/app-breadcrumbs";
-import { ToggleTheme } from "~/app/_components/ui/toggle-theme";
-import { SidebarTrigger, useSidebar } from "~/components/ui/sidebar";
-import { H3 } from "~/components/ui/typography";
+import { BreadcrumbProps, Breadcrumbs } from '~/app/_components/ui/app-breadcrumbs';
+import { ToggleTheme } from '~/app/_components/ui/toggle-theme';
+import { SidebarTrigger, useSidebar } from '~/components/ui/sidebar';
+import { H3 } from '~/components/ui/typography';
 
-import { Flex } from "./flex";
+import { Flex } from './flex';
 
 interface PageScreenProps extends PropsWithChildren {
   title: string;
   breadcrumbs: BreadcrumbProps[];
 }
 
-export const PageScreen: FC<PageScreenProps> = ({
-  title,
-  breadcrumbs,
-  children,
-}) => {
+export const PageScreen: FC<PageScreenProps> = ({ title, breadcrumbs, children }) => {
   const { isMobile } = useSidebar();
   return (
     <Fragment>

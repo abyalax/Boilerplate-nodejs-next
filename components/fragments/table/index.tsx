@@ -1,53 +1,26 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: < */
-"use client";
+'use client';
 
-import type {
-  ColumnDef,
-  PaginationState,
-  Row,
-  SortingState,
-  Updater,
-} from "@tanstack/react-table";
-import {
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
-import { useVirtualizer } from "@tanstack/react-virtual";
-import { useSearchParams } from "next/navigation";
-import { MouseEvent, ReactNode, useEffect, useRef, useState } from "react";
-import { FaArrowDown, FaArrowUp } from "react-icons/fa";
+import type { ColumnDef, PaginationState, Row, SortingState, Updater } from '@tanstack/react-table';
+import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
+import { useVirtualizer } from '@tanstack/react-virtual';
+import { useSearchParams } from 'next/navigation';
+import { MouseEvent, ReactNode, useEffect, useRef, useState } from 'react';
+import { FaArrowDown, FaArrowUp } from 'react-icons/fa';
 
-import { MetaResponse } from "~/common/types/meta";
-import { useDebouncedCallback } from "~/components/hooks/use-debounce-callback";
-import { useNavigate } from "~/components/hooks/use-navigate";
-import { Flex } from "~/components/layouts/flex";
-import { Input } from "~/components/ui/input";
-import { Pill } from "~/components/ui/pill";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
-import {
-  TableBody,
-  TableCell,
-  Table as TableComponent,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "~/components/ui/table";
-import { TablePagination } from "~/components/ui/table-pagination";
-import { createFuzzyFilter } from "~/lib/utils";
-import { ColumnVisibilitySelector } from "./_ui/column-visibility";
+import { MetaResponse } from '~/common/types/meta';
+import { useDebouncedCallback } from '~/components/hooks/use-debounce-callback';
+import { useNavigate } from '~/components/hooks/use-navigate';
+import { Flex } from '~/components/layouts/flex';
+import { Input } from '~/components/ui/input';
+import { Pill } from '~/components/ui/pill';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select';
+import { TableBody, TableCell, Table as TableComponent, TableFooter, TableHead, TableHeader, TableRow } from '~/components/ui/table';
+import { TablePagination } from '~/components/ui/table-pagination';
+import { createFuzzyFilter } from '~/lib/utils';
+import { ColumnVisibilitySelector } from './_ui/column-visibility';
 
-export type EngineSide = "client_side" | "server_side";
+export type EngineSide = 'client_side' | 'server_side';
 
 type EnableFeature<T> = {
   search?: { fieldSearchable: keyof T; debounceSearch?: number };
@@ -73,27 +46,19 @@ export type TableProps<T> = {
 
 const defaultFeature: EnableFeature<any> = {
   virtualizer: { virtualizeAt: 1000 },
-  engineSide: "client_side",
+  engineSide: 'client_side',
   pagination: {
     perPageOptions: [5, 10, 20, 30, 40, 50, 100],
   },
 };
 
-export const Table = <T,>({
-  enableFeature = defaultFeature,
-  onClickRow,
-  ...props
-}: TableProps<T>) => {
-  const [engine] = useState<EngineSide>(
-    enableFeature.engineSide ?? "client_side",
-  );
+export const Table = <T,>({ enableFeature = defaultFeature, onClickRow, ...props }: TableProps<T>) => {
+  const [engine] = useState<EngineSide>(enableFeature.engineSide ?? 'client_side');
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
   });
-  const [globalFilter, setGlobalFilter] = useState<string | undefined>(
-    undefined,
-  );
+  const [globalFilter, setGlobalFilter] = useState<string | undefined>(undefined);
   const [sorting, setSorting] = useState<SortingState>([]);
 
   const fuzzyFilter = createFuzzyFilter<T>();
@@ -101,15 +66,11 @@ export const Table = <T,>({
   const search = useSearchParams();
   const navigate = useNavigate();
 
-  const isClientControl = engine === "client_side";
-  const isServerControl = engine === "server_side";
+  const isClientControl = engine === 'client_side';
+  const isServerControl = engine === 'server_side';
 
-  const pageIndex = isServerControl
-    ? Number(search.get("page") ?? 1) - 1
-    : pagination.pageIndex;
-  const pageSize = isServerControl
-    ? Number(search.get("per_page") ?? 10)
-    : pagination.pageSize;
+  const pageIndex = isServerControl ? Number(search.get('page') ?? 1) - 1 : pagination.pageIndex;
+  const pageSize = isServerControl ? Number(search.get('per_page') ?? 10) : pagination.pageSize;
   const debounceSearch = enableFeature.search?.debounceSearch ?? 800;
   const filterFns = { fuzzy: fuzzyFilter };
 
@@ -130,10 +91,7 @@ export const Table = <T,>({
   }, debounceSearch);
 
   const onPaginationChange = (updater: Updater<PaginationState>) => {
-    const next =
-      typeof updater === "function"
-        ? updater({ pageIndex, pageSize })
-        : updater;
+    const next = typeof updater === 'function' ? updater({ pageIndex, pageSize }) : updater;
     navigate({
       replace: true,
       search: (prev) => ({
@@ -146,13 +104,13 @@ export const Table = <T,>({
   };
 
   const onSortingChange = (updater: Updater<SortingState>) => {
-    const next = typeof updater === "function" ? updater(sorting) : updater;
+    const next = typeof updater === 'function' ? updater(sorting) : updater;
     setSorting(updater);
     navigate({
       search: (prev) => ({
         ...prev,
         sort_by: next[0]?.id,
-        sort_order: next[0]?.desc ? "DESC" : "ASC",
+        sort_order: next[0]?.desc ? 'DESC' : 'ASC',
       }),
       replace: true,
       viewTransition: true,
@@ -174,11 +132,7 @@ export const Table = <T,>({
     /**Client Side */
     getSortedRowModel: isClientControl ? getSortedRowModel() : undefined,
     getFilteredRowModel: isClientControl ? getFilteredRowModel() : undefined,
-    getPaginationRowModel: enableFeature.pagination
-      ? isClientControl
-        ? getPaginationRowModel()
-        : undefined
-      : undefined,
+    getPaginationRowModel: enableFeature.pagination ? (isClientControl ? getPaginationRowModel() : undefined) : undefined,
 
     filterFns: isClientControl ? filterFns : undefined,
     globalFilterFn: isClientControl ? fuzzyFilter : undefined,
@@ -192,16 +146,11 @@ export const Table = <T,>({
     manualSorting: isServerControl,
     manualFiltering: isServerControl,
     pageCount: isServerControl ? props.data?.meta.total_pages : undefined,
-    onPaginationChange: enableFeature.pagination
-      ? isServerControl
-        ? onPaginationChange
-        : setPagination
-      : undefined,
+    onPaginationChange: enableFeature.pagination ? (isServerControl ? onPaginationChange : setPagination) : undefined,
 
     /**State */
     initialState: {
-      columnVisibility:
-        enableFeature.columnVisibilitySelector?.initialColumnVisibility,
+      columnVisibility: enableFeature.columnVisibilitySelector?.initialColumnVisibility,
       columnOrder: props.columnIds as string[],
       pagination: {
         pageIndex: 0,
@@ -216,13 +165,11 @@ export const Table = <T,>({
             pageSize,
           }
         : undefined,
-      globalFilter: isClientControl ? globalFilter : search.get("search"),
+      globalFilter: isClientControl ? globalFilter : search.get('search'),
     },
   });
 
-  const selectedRows = table
-    .getSelectedRowModel()
-    .rows.map((row) => row.original);
+  const selectedRows = table.getSelectedRowModel().rows.map((row) => row.original);
   const virtualizer = useVirtualizer({
     count: table.getRowModel().rows.length,
     getScrollElement: () => parentRef.current,
@@ -235,8 +182,7 @@ export const Table = <T,>({
   }, [globalFilter, table]);
 
   useEffect(() => {
-    if (search.get("search") !== undefined && isClientControl)
-      setGlobalFilter(search.get("search") ?? undefined);
+    if (search.get('search') !== undefined && isClientControl) setGlobalFilter(search.get('search') ?? undefined);
   }, [isClientControl, search]);
 
   return (
@@ -244,26 +190,12 @@ export const Table = <T,>({
       <div className="flex items-center justify-between">
         {enableFeature.menufilter}
         {enableFeature.search && (
-          <Flex
-            gap={"md"}
-            align={"center"}
-            justify={"center"}
-            style={{ width: 300 }}
-          >
-            <Input
-              placeholder="Search..."
-              value={globalFilter ?? ""}
-              onChange={(e) => setGlobalFilter(e.target.value)}
-            />
+          <Flex gap={'md'} align={'center'} justify={'center'} style={{ width: 300 }}>
+            <Input placeholder="Search..." value={globalFilter ?? ''} onChange={(e) => setGlobalFilter(e.target.value)} />
           </Flex>
         )}
-        <Pill
-          onRemove={() => table.resetRowSelection()}
-          selectedCount={selectedRows.length}
-        />
-        {enableFeature.columnVisibilitySelector?.initialColumnVisibility && (
-          <ColumnVisibilitySelector table={table} columnIds={props.columnIds} />
-        )}
+        <Pill onRemove={() => table.resetRowSelection()} selectedCount={selectedRows.length} />
+        {enableFeature.columnVisibilitySelector?.initialColumnVisibility && <ColumnVisibilitySelector table={table} columnIds={props.columnIds} />}
       </div>
       <TableComponent>
         <TableHeader>
@@ -272,15 +204,10 @@ export const Table = <T,>({
               {headerGroup.headers.map((header) => (
                 <TableHead key={header.index} colSpan={header.colSpan}>
                   <div onClick={header.column.getToggleSortingHandler()}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                     {{
-                      asc: <FaArrowUp style={{ margin: "0 5px" }} />,
-                      desc: <FaArrowDown style={{ margin: "0 5px" }} />,
+                      asc: <FaArrowUp style={{ margin: '0 5px' }} />,
+                      desc: <FaArrowDown style={{ margin: '0 5px' }} />,
                     }[header.column.getIsSorted() as string] ?? null}
                   </div>
                 </TableHead>
@@ -289,14 +216,13 @@ export const Table = <T,>({
           ))}
         </TableHeader>
         <TableBody>
-          {table.getRowModel().rows.length >
-          (enableFeature.virtualizer?.virtualizeAt as number)
+          {table.getRowModel().rows.length > (enableFeature.virtualizer?.virtualizeAt as number)
             ? virtualizer.getVirtualItems().map((virtualRow, index) => {
                 const rows = table.getRowModel().rows;
                 const row = rows[virtualRow.index];
                 return (
                   <TableRow
-                    data-state={row.getIsSelected() && "selected"}
+                    data-state={row.getIsSelected() && 'selected'}
                     className="bg-red-500"
                     onClick={(e) => onClickRow(row, e)}
                     key={virtualRow.key}
@@ -306,29 +232,15 @@ export const Table = <T,>({
                     }}
                   >
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </TableCell>
+                      <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                     ))}
                   </TableRow>
                 );
               })
             : table.getRowModel().rows.map((row: Row<any>) => (
-                <TableRow
-                  onClick={(e) => onClickRow(row, e)}
-                  style={{ cursor: "pointer" }}
-                  key={row.id}
-                >
+                <TableRow onClick={(e) => onClickRow(row, e)} style={{ cursor: 'pointer' }} key={row.id}>
                   {row.getVisibleCells().map((cell, index) => (
-                    <TableCell key={index}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </TableCell>
+                    <TableCell key={index}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                   ))}
                 </TableRow>
               ))}
@@ -337,12 +249,7 @@ export const Table = <T,>({
           {table.getFooterGroups().map((footerGroup) => (
             <TableRow key={footerGroup.id}>
               {footerGroup.headers.map((header) => (
-                <TableHead key={header.index}>
-                  {flexRender(
-                    header.column.columnDef.footer,
-                    header.getContext(),
-                  )}
-                </TableHead>
+                <TableHead key={header.index}>{flexRender(header.column.columnDef.footer, header.getContext())}</TableHead>
               ))}
             </TableRow>
           ))}
@@ -360,17 +267,12 @@ export const Table = <T,>({
 
                 <div className="flex items-center gap-2">
                   <p className="text-sm w-24">Current Page</p>
-                  <p className="text-sm">
-                    : {table.getState().pagination.pageIndex + 1}
-                  </p>
+                  <p className="text-sm">: {table.getState().pagination.pageIndex + 1}</p>
                 </div>
 
                 <div className="flex items-center gap-2">
                   <p className="text-sm w-24">Page Size</p>
-                  <Select
-                    value={table.getState().pagination.pageSize.toString()}
-                    onValueChange={(value) => table.setPageSize(Number(value))}
-                  >
+                  <Select value={table.getState().pagination.pageSize.toString()} onValueChange={(value) => table.setPageSize(Number(value))}>
                     <SelectTrigger className="w-[70px] h-8">
                       <SelectValue />
                     </SelectTrigger>
@@ -386,7 +288,7 @@ export const Table = <T,>({
               </div>
             </div>
           </Flex>
-          <Flex justify={"center"} align={"center"}>
+          <Flex justify={'center'} align={'center'}>
             <TablePagination
               totalPages={table.getPageCount()}
               currentPage={table.getState().pagination.pageIndex + 1}

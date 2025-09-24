@@ -1,12 +1,12 @@
-import { relations } from "drizzle-orm";
-import { integer, pgTable, primaryKey } from "drizzle-orm/pg-core";
+import { relations } from 'drizzle-orm';
+import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
 
-import { roles } from "~/db/schema";
+import { roles } from '~/db/schema';
 
-import { users } from "./users.schema";
+import { users } from './users.schema';
 
 export const userRoles = pgTable(
-  "user_roles",
+  'user_roles',
   {
     userId: integer().notNull(),
     roleId: integer().notNull(),

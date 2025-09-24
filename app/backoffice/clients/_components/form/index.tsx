@@ -1,21 +1,14 @@
-"use client";
+'use client';
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { FC } from "react";
-import { useForm } from "react-hook-form";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { FC } from 'react';
+import { useForm } from 'react-hook-form';
 
-import { Button } from "~/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "~/components/ui/form";
-import { Input } from "~/components/ui/input";
+import { Button } from '~/components/ui/button';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '~/components/ui/form';
+import { Input } from '~/components/ui/input';
 
-import { clientSchema, FormDataClient } from "./schema";
+import { clientSchema, FormDataClient } from './schema';
 
 interface FormProps {
   initialValues?: FormDataClient;
@@ -24,18 +17,13 @@ interface FormProps {
   buttonText?: string;
 }
 
-export const FormClient: FC<FormProps> = ({
-  onSubmit,
-  initialValues,
-  isLoading = false,
-  buttonText = "Submit",
-}) => {
+export const FormClient: FC<FormProps> = ({ onSubmit, initialValues, isLoading = false, buttonText = 'Submit' }) => {
   const form = useForm<FormDataClient>({
     resolver: zodResolver(clientSchema),
     defaultValues: initialValues ?? {
-      name: "",
-      email: "",
-      password: "",
+      name: '',
+      email: '',
+      password: '',
     },
   });
 
@@ -67,11 +55,7 @@ export const FormClient: FC<FormProps> = ({
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input
-                  type="email"
-                  placeholder="Enter email address"
-                  {...field}
-                />
+                <Input type="email" placeholder="Enter email address" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -85,11 +69,7 @@ export const FormClient: FC<FormProps> = ({
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input
-                  type="password"
-                  placeholder="Enter password"
-                  {...field}
-                />
+                <Input type="password" placeholder="Enter password" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -97,7 +77,7 @@ export const FormClient: FC<FormProps> = ({
         />
 
         <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? "Processing..." : buttonText}
+          {isLoading ? 'Processing...' : buttonText}
         </Button>
       </form>
     </Form>

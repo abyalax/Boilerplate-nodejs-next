@@ -1,22 +1,15 @@
-"use client";
+'use client';
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useParams } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useParams } from 'next/navigation';
+import { useForm } from 'react-hook-form';
 
-import { Button } from "~/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "~/components/ui/form";
-import { Input } from "~/components/ui/input";
-import { CreateUser, userInsertSchema } from "~/db/schema";
+import { Button } from '~/components/ui/button';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '~/components/ui/form';
+import { Input } from '~/components/ui/input';
+import { CreateUser, userInsertSchema } from '~/db/schema';
 
-import { useCreateCustomer } from "../_hooks/use-create-customer";
+import { useCreateCustomer } from '../_hooks/use-create-customer';
 
 export function FormCreateCustomer() {
   const { clientId } = useParams<{ clientId: string }>();
@@ -24,9 +17,9 @@ export function FormCreateCustomer() {
   const form = useForm<CreateUser>({
     resolver: zodResolver(userInsertSchema),
     defaultValues: {
-      name: "",
-      email: "",
-      password: "",
+      name: '',
+      email: '',
+      password: '',
       roleId: 1,
     },
   });
@@ -59,11 +52,7 @@ export function FormCreateCustomer() {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input
-                  type="email"
-                  placeholder="Enter email address"
-                  {...field}
-                />
+                <Input type="email" placeholder="Enter email address" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -77,11 +66,7 @@ export function FormCreateCustomer() {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input
-                  type="password"
-                  placeholder="Enter password"
-                  {...field}
-                />
+                <Input type="password" placeholder="Enter password" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

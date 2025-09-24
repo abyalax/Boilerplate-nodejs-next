@@ -1,39 +1,39 @@
 /** biome-ignore-all lint/style/useNamingConvention: <off> */
-export type roles = "Customer" | "Client Admin" | "System Admin";
+export type roles = 'Customer' | 'Client Admin' | 'System Admin';
 
 export const ROLE: Record<string, roles> = {
-  CUSTOMER: "Customer",
-  CLIENT: "Client Admin",
-  SYSTEM_ADMIN: "System Admin",
+  CUSTOMER: 'Customer',
+  CLIENT: 'Client Admin',
+  SYSTEM_ADMIN: 'System Admin',
 };
 
 export const ROLEIDS: Record<roles, number> = {
   Customer: 1,
-  "Client Admin": 2,
-  "System Admin": 3,
+  'Client Admin': 2,
+  'System Admin': 3,
 };
 
 export const PERMISSIONS = {
   CLIENT: {
-    CREATE: "client:create",
-    READ: "client:read",
-    UPDATE: "client:update",
-    DELETE: "client:delete",
-    ALL: "client:*",
+    CREATE: 'client:create',
+    READ: 'client:read',
+    UPDATE: 'client:update',
+    DELETE: 'client:delete',
+    ALL: 'client:*',
   },
   CUSTOMER: {
-    READ_PROFILE: "customer:read_profile",
+    READ_PROFILE: 'customer:read_profile',
 
-    CREATE_ORDER: "customer:create_order",
-    READ_ORDER: "customer:read_order",
-    UPDATE_ORDER: "customer:update_order",
-    DELETE_ORDER: "customer:delete_order",
+    CREATE_ORDER: 'customer:create_order',
+    READ_ORDER: 'customer:read_order',
+    UPDATE_ORDER: 'customer:update_order',
+    DELETE_ORDER: 'customer:delete_order',
 
-    CREATE: "customer:create",
-    READ: "customer:read",
-    UPDATE: "customer:update",
-    DELETE: "customer:delete",
+    CREATE: 'customer:create',
+    READ: 'customer:read',
+    UPDATE: 'customer:update',
+    DELETE: 'customer:delete',
 
-    ALL: "customer:*",
+    ALL: 'customer:*',
   },
 } as const;

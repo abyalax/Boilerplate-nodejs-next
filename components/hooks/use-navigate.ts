@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 export type Params = Record<string, string | number | null | undefined>;
 export type Updater<T> = T | ((_prev: T) => T);
@@ -17,11 +17,7 @@ export function useNavigate<T extends Params = Params>() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  return ({
-    replace = false,
-    search,
-    viewTransition = false,
-  }: NavigateOptions<T>) => {
+  return ({ replace = false, search, viewTransition = false }: NavigateOptions<T>) => {
     // Snapshot current params
     const current: Params = {};
     searchParams.forEach((value, key) => {
@@ -29,10 +25,7 @@ export function useNavigate<T extends Params = Params>() {
     });
 
     // Resolve updater
-    const nextSearch =
-      typeof search === "function"
-        ? (search as unknown as ParamFunc)(current)
-        : { ...current, ...search };
+    const nextSearch = typeof search === 'function' ? (search as unknown as ParamFunc)(current) : { ...current, ...search };
 
     // Build query
     const params = new URLSearchParams();
@@ -46,7 +39,7 @@ export function useNavigate<T extends Params = Params>() {
 
     const navigateFn = replace ? router.replace : router.push;
 
-    if (viewTransition && "startViewTransition" in document) {
+    if (viewTransition && 'startViewTransition' in document) {
       document.startViewTransition(() => navigateFn(url));
     } else {
       navigateFn(url);

@@ -1,21 +1,14 @@
-"use client";
+'use client';
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import z from "zod";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import z from 'zod';
 
-import { Button } from "~/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "~/components/ui/form";
-import { Input } from "~/components/ui/input";
+import { Button } from '~/components/ui/button';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '~/components/ui/form';
+import { Input } from '~/components/ui/input';
 
-import { useForgotPassword } from "../../_hooks/use-forgot-password";
+import { useForgotPassword } from '../../_hooks/use-forgot-password';
 
 export const FormForgotPassword = () => {
   const { mutate: forgotPassword } = useForgotPassword();
@@ -26,7 +19,7 @@ export const FormForgotPassword = () => {
       }),
     ),
     defaultValues: {
-      email: "",
+      email: '',
     },
   });
 
@@ -45,11 +38,7 @@ export const FormForgotPassword = () => {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="Enter your email"
-                    type="email"
-                    {...field}
-                  />
+                  <Input placeholder="Enter your email" type="email" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

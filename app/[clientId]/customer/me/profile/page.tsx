@@ -1,36 +1,35 @@
-import { Metadata } from "next";
+import { Metadata } from 'next';
 
-import { PERMISSIONS } from "~/common/const/permission";
-import { PageScreen } from "~/components/layouts/page";
+import { PERMISSIONS } from '~/common/const/permission';
+import { PageScreen } from '~/components/layouts/page';
 
 export const metadata: Metadata = {
-  title: "Customer Profile | Next Boilerplate",
-  description:
-    "Customer Profile for managing profile, settings, and system configurations",
-  keywords: "admin, Profile, management, profile, settings",
+  title: 'Customer Profile | Next Boilerplate',
+  description: 'Customer Profile for managing profile, settings, and system configurations',
+  keywords: 'admin, Profile, management, profile, settings',
 };
 
 export const permissions = [PERMISSIONS.CUSTOMER.READ_PROFILE];
 
 const breadcrumbItems = (clientId: string) => [
   {
-    title: "Home",
+    title: 'Home',
     url: `/${clientId}/customer`,
     active: false,
   },
   {
-    title: "Orders",
+    title: 'Orders',
     url: `/${clientId}/customer/orders`,
     active: false,
   },
   {
-    title: "Profile",
+    title: 'Profile',
     url: `/${clientId}/customer/me/profile`,
     active: true,
   },
 ];
 
-type Props = PageProps<"/[clientId]/customer/me/profile">;
+type Props = PageProps<'/[clientId]/customer/me/profile'>;
 
 export default async function Page({ params }: Props) {
   const { clientId } = await params;

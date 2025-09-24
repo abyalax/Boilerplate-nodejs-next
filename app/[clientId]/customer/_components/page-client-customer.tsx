@@ -1,33 +1,24 @@
-"use client";
+'use client';
 
-import { useParams } from "next/navigation";
-import { signOut } from "next-auth/react";
+import { useParams } from 'next/navigation';
+import { signOut } from 'next-auth/react';
 
-import { Button } from "~/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "~/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import { Button } from '~/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '~/components/ui/table';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 
 export const PageClientCustomer = () => {
   const { clientId } = useParams<{ clientId: string }>();
 
-  console.log("clientId: ", clientId);
+  console.log('clientId: ', clientId);
 
   return (
     <div className="container mx-auto p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Customer Dashboard</h1>
-          <p className="text-muted-foreground">
-            Manage your application settings
-          </p>
+          <p className="text-muted-foreground">Manage your application settings</p>
         </div>
         <Button variant="outline" onClick={() => signOut()}>
           Sign Out
@@ -85,15 +76,11 @@ export const PageClientCustomer = () => {
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <h3 className="font-medium">Email Notifications</h3>
-                <p className="text-muted-foreground">
-                  Configure system-wide email notification settings
-                </p>
+                <p className="text-muted-foreground">Configure system-wide email notification settings</p>
               </div>
               <div className="space-y-2">
                 <h3 className="font-medium">Security Settings</h3>
-                <p className="text-muted-foreground">
-                  Manage security preferences and access controls
-                </p>
+                <p className="text-muted-foreground">Manage security preferences and access controls</p>
               </div>
             </CardContent>
           </Card>
@@ -105,9 +92,7 @@ export const PageClientCustomer = () => {
               <CardTitle>System Logs</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground">
-                System logs and activity history will be displayed here
-              </p>
+              <p className="text-muted-foreground">System logs and activity history will be displayed here</p>
             </CardContent>
           </Card>
         </TabsContent>

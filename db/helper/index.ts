@@ -1,7 +1,7 @@
-import { SQL, sql } from "drizzle-orm";
-import { PgTable } from "drizzle-orm/pg-core";
-import { MetaResponse } from "~/common/types/meta";
-import { db } from "..";
+import { SQL, sql } from 'drizzle-orm';
+import { PgTable } from 'drizzle-orm/pg-core';
+import { MetaResponse } from '~/common/types/meta';
+import { db } from '..';
 
 type PaginateOptions = {
   table: PgTable;
@@ -11,16 +11,8 @@ type PaginateOptions = {
   orderBy?: SQL;
 };
 
-export async function paginate<T>({
-  table,
-  page,
-  perPage,
-  orderBy,
-  where,
-}: PaginateOptions): Promise<{ data: T[]; meta: MetaResponse }> {
-  const totalCountResult = await db
-    .select({ count: sql<number>`count(*)`.mapWith(Number) })
-    .from(table);
+export async function paginate<T>({ table, page, perPage, orderBy, where }: PaginateOptions): Promise<{ data: T[]; meta: MetaResponse }> {
+  const totalCountResult = await db.select({ count: sql<number>`count(*)`.mapWith(Number) }).from(table);
 
   const totalCount = totalCountResult[0].count;
   const totalPages = Math.ceil(totalCount / perPage);

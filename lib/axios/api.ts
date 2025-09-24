@@ -1,5 +1,5 @@
-import type { AxiosRequestConfig } from "axios";
-import axios from "axios";
+import type { AxiosRequestConfig } from 'axios';
+import axios from 'axios';
 
 export const axiosRequest: AxiosRequestConfig = {
   baseURL: process.env.NEXT_PUBLIC_BASE_URL_API,

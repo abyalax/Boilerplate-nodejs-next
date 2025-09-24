@@ -1,9 +1,9 @@
-import { ReactNode } from "react";
+import { ReactNode } from 'react';
 
-import { Footer } from "~/components/ui/footer";
-import { Navbar } from "~/components/ui/navbar";
+import { Footer } from '~/components/ui/footer';
+import { Navbar } from '~/components/ui/navbar';
 
-import { navigationGuest } from "../navigation";
+import { navigationGuest } from '../navigation';
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (

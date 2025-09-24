@@ -1,13 +1,13 @@
-import { createColumnHelper } from "@tanstack/react-table";
-import Link from "next/link";
-import { useMemo } from "react";
-import { FaPencilAlt, FaTrash } from "react-icons/fa";
-import { Checkbox } from "~/components/ui/checkbox";
-import { User } from "~/db/schema";
-import { useDeleteClient } from "./use-delete-client";
+import { createColumnHelper } from '@tanstack/react-table';
+import Link from 'next/link';
+import { useMemo } from 'react';
+import { FaPencilAlt, FaTrash } from 'react-icons/fa';
+import { Checkbox } from '~/components/ui/checkbox';
+import { User } from '~/db/schema';
+import { useDeleteClient } from './use-delete-client';
 
 const columnHelper = createColumnHelper<User>();
-export type TUserColumn = keyof User | "select" | "action";
+export type TUserColumn = keyof User | 'select' | 'action';
 
 type Params = {
   defaultVisible: TUserColumn[];
@@ -19,17 +19,11 @@ export const useColumns = ({ defaultVisible }: Params) => {
   const columns = useMemo(
     () => [
       columnHelper.display({
-        id: "select",
+        id: 'select',
         header: ({ table }) => (
           <Checkbox
             className="cursor-pointer"
-            checked={
-              table.getIsAllRowsSelected()
-                ? true
-                : table.getIsSomeRowsSelected()
-                  ? "indeterminate"
-                  : false
-            }
+            checked={table.getIsAllRowsSelected() ? true : table.getIsSomeRowsSelected() ? 'indeterminate' : false}
             onCheckedChange={(value) => table.toggleAllRowsSelected(!!value)}
             onClick={(e) => e.stopPropagation()}
             aria-label="Select all"
@@ -45,24 +39,20 @@ export const useColumns = ({ defaultVisible }: Params) => {
           />
         ),
       }),
-      columnHelper.accessor("name", {
-        id: "name",
-        header: "Name",
+      columnHelper.accessor('name', {
+        id: 'name',
+        header: 'Name',
       }),
-      columnHelper.accessor("email", {
-        id: "email",
-        header: "Email",
+      columnHelper.accessor('email', {
+        id: 'email',
+        header: 'Email',
       }),
       columnHelper.display({
-        id: "action",
-        header: "Action",
+        id: 'action',
+        header: 'Action',
         cell: (info) => (
           <div className="flex items-center gap-2">
-            <Link
-              href={`/backoffice/clients/${info.row.original.id}`}
-              onClick={(e) => e.stopPropagation()}
-              className="text-gray-700 hover:text-blue-600"
-            >
+            <Link href={`/backoffice/clients/${info.row.original.id}`} onClick={(e) => e.stopPropagation()} className="text-gray-700 hover:text-blue-600">
               <FaPencilAlt />
             </Link>
             <button

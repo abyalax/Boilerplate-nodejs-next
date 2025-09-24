@@ -1,19 +1,11 @@
-import { and, eq, SQL } from "drizzle-orm";
+import { and, eq, SQL } from 'drizzle-orm';
 
-import { ROLE } from "~/common/const/permission";
-import {
-  BaseUser,
-  CreateUser,
-  roles,
-  UpdateUser,
-  User,
-  userRoles,
-  users,
-} from "~/db/schema";
-import { NotFoundException } from "~/lib/handler/error";
+import { ROLE } from '~/common/const/permission';
+import { BaseUser, CreateUser, roles, UpdateUser, User, userRoles, users } from '~/db/schema';
+import { NotFoundException } from '~/lib/handler/error';
 
-import { db } from "..";
-import { UserRepository, userRepository } from "./users.repository";
+import { db } from '..';
+import { UserRepository, userRepository } from './users.repository';
 
 class CustomerRepository {
   userRepository: UserRepository;
@@ -26,26 +18,25 @@ class CustomerRepository {
     const clientRole = await db.query.roles.findFirst({
       where: eq(roles.name, ROLE.CUSTOMER),
     });
-    if (!clientRole)
-      throw new NotFoundException(`Role ${ROLE.CUSTOMER} not found`);
+    if (!clientRole) throw new NotFoundException(`Role ${ROLE.CUSTOMER} not found`);
     const clause = and(eq(userRoles.roleId, clientRole.id), whereClause);
-    if (clause === undefined) throw new NotFoundException("Customer not found");
+    if (clause === undefined) throw new NotFoundException('Customer not found');
     return clause;
   }
 
   async find(whereClause?: SQL): Promise<User[]> {
     const clause = await this.customerWhere(whereClause);
-    if (clause === undefined) throw new NotFoundException("Customer not found");
+    if (clause === undefined) throw new NotFoundException('Customer not found');
     const find = await this.userRepository.findMany(clause);
-    if (find === undefined) throw new NotFoundException("Customer not found");
+    if (find === undefined) throw new NotFoundException('Customer not found');
     return find;
   }
 
   async findById(id: number): Promise<User> {
     const clause = await this.customerWhere(eq(users.id, id));
-    if (clause === undefined) throw new NotFoundException("Customer not found");
+    if (clause === undefined) throw new NotFoundException('Customer not found');
     const client = await this.userRepository.findFirst(clause);
-    if (!client) throw new NotFoundException("Customer not found");
+    if (!client) throw new NotFoundException('Customer not found');
     return client;
   }
 
@@ -53,8 +44,7 @@ class CustomerRepository {
     const clientRole = await db.query.roles.findFirst({
       where: eq(roles.name, ROLE.CUSTOMER),
     });
-    if (!clientRole)
-      throw new NotFoundException(`Role ${ROLE.CUSTOMER} not found`);
+    if (!clientRole) throw new NotFoundException(`Role ${ROLE.CUSTOMER} not found`);
     return await this.userRepository.create({
       ...payload,
       roleId: clientRole.id,
@@ -63,7 +53,7 @@ class CustomerRepository {
 
   async update(id: number, payload: UpdateUser): Promise<BaseUser> {
     const clause = await this.customerWhere(eq(users.id, id));
-    if (clause === undefined) throw new NotFoundException("Customer not found");
+    if (clause === undefined) throw new NotFoundException('Customer not found');
     return this.userRepository.update(clause, payload);
   }
 

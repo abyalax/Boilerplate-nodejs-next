@@ -1,19 +1,9 @@
-import * as bcrypt from "bcrypt";
-import { eq, SQL } from "drizzle-orm";
+import * as bcrypt from 'bcrypt';
+import { eq, SQL } from 'drizzle-orm';
 
-import { db } from "~/db";
-import {
-  BaseUser,
-  CreateUser,
-  Permission,
-  Role,
-  UpdateUser,
-  User,
-  UserRoles,
-  userRoles,
-  users,
-} from "~/db/schema";
-import { UnprocessableEntity } from "~/lib/handler/error";
+import { db } from '~/db';
+import { BaseUser, CreateUser, Permission, Role, UpdateUser, User, UserRoles, userRoles, users } from '~/db/schema';
+import { UnprocessableEntity } from '~/lib/handler/error';
 
 export class UserRepository {
   async findById(id: number): Promise<User | undefined> {
@@ -22,7 +12,7 @@ export class UserRepository {
 
   async create(user: CreateUser): Promise<BaseUser> {
     const userExist = await this.baseFind(eq(users.email, user.email));
-    if (userExist) throw new UnprocessableEntity("Email already exist");
+    if (userExist) throw new UnprocessableEntity('Email already exist');
     const hashed = await bcrypt.hash(user.password, 10);
     return await db.transaction(async (tx) => {
       const [inserted] = await tx

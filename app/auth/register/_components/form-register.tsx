@@ -1,22 +1,15 @@
-"use client";
+'use client';
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn } from "next-auth/react";
-import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
-import z from "zod";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { signIn } from 'next-auth/react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
+import z from 'zod';
 
-import { Button } from "~/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "~/components/ui/form";
-import { Input } from "~/components/ui/input";
-import { Separator } from "~/components/ui/separator";
+import { Button } from '~/components/ui/button';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '~/components/ui/form';
+import { Input } from '~/components/ui/input';
+import { Separator } from '~/components/ui/separator';
 
 const loginSchema = z.object({
   email: z.string(),
@@ -27,52 +20,44 @@ export const FormRegister = () => {
   const form = useForm({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      email: '',
+      password: '',
     },
   });
 
   const onSubmit = form.handleSubmit(async (data) => {
-    const res = await signIn("credentials", {
+    const res = await signIn('credentials', {
       ...data,
       redirect: true,
-      callbackUrl: "/",
+      callbackUrl: '/',
     });
     if (res?.error) {
       toast.error(res.error);
     } else {
-      toast.success("Login berhasil");
+      toast.success('Login berhasil');
       form.reset();
     }
   });
 
   const handleGoogleSignIn = async () => {
     try {
-      const res = await signIn("google", { redirect: true });
+      const res = await signIn('google', { redirect: true });
       if (res?.error) {
-        toast.error("Google sign in failed");
+        toast.error('Google sign in failed');
       } else {
-        toast.success("Login successful");
+        toast.success('Login successful');
       }
     } catch (error) {
       console.log(error);
-      toast.error("An error occurred during sign in");
+      toast.error('An error occurred during sign in');
     }
   };
 
   return (
     <div className="space-y-6">
-      <Button
-        type="button"
-        variant="outline"
-        className="w-full"
-        onClick={handleGoogleSignIn}
-      >
+      <Button type="button" variant="outline" className="w-full" onClick={handleGoogleSignIn}>
         <svg className="mr-2 h-4 w-4" aria-hidden="true" viewBox="0 0 24 24">
-          <path
-            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-            fill="#4285F4"
-          />
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
           <path
             d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
             fill="#34A853"
@@ -94,9 +79,7 @@ export const FormRegister = () => {
           <Separator className="w-full" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-card px-2 text-muted-foreground">
-            Or continue with email
-          </span>
+          <span className="bg-card px-2 text-muted-foreground">Or continue with email</span>
         </div>
       </div>
 
@@ -109,11 +92,7 @@ export const FormRegister = () => {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="Enter your email"
-                    type="email"
-                    {...field}
-                  />
+                  <Input placeholder="Enter your email" type="email" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -127,11 +106,7 @@ export const FormRegister = () => {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="Enter your password"
-                    type="password"
-                    {...field}
-                  />
+                  <Input placeholder="Enter your password" type="password" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
