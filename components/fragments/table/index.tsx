@@ -4,13 +4,13 @@
 import type { ColumnDef, PaginationState, Row, SortingState, Updater } from '@tanstack/react-table';
 import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { useSearchParams } from 'next/navigation';
 import { MouseEvent, ReactNode, useEffect, useRef, useState } from 'react';
 import { FaArrowDown, FaArrowUp } from 'react-icons/fa';
 
-import { MetaResponse } from '~/common/types/meta';
+import { MetaResponse, metaRequestSchema } from '~/common/types/meta';
 import { useDebouncedCallback } from '~/components/hooks/use-debounce-callback';
 import { useNavigate } from '~/components/hooks/use-navigate';
+import { useSearch } from '~/components/hooks/use-search';
 import { Flex } from '~/components/layouts/flex';
 import { Input } from '~/components/ui/input';
 import { Pill } from '~/components/ui/pill';
@@ -63,14 +63,15 @@ export const Table = <T,>({ enableFeature = defaultFeature, onClickRow, ...props
 
   const fuzzyFilter = createFuzzyFilter<T>();
   const parentRef = useRef<HTMLDivElement>(null);
-  const search = useSearchParams();
+  const search = useSearch(metaRequestSchema);
+
   const navigate = useNavigate();
 
   const isClientControl = engine === 'client_side';
   const isServerControl = engine === 'server_side';
 
-  const pageIndex = isServerControl ? Number(search.get('page') ?? 1) - 1 : pagination.pageIndex;
-  const pageSize = isServerControl ? Number(search.get('per_page') ?? 10) : pagination.pageSize;
+  const pageIndex = isServerControl ? Number(search.page ?? 1) - 1 : pagination.pageIndex;
+  const pageSize = isServerControl ? Number(search.per_page ?? 10) : pagination.pageSize;
   const debounceSearch = enableFeature.search?.debounceSearch ?? 800;
   const filterFns = { fuzzy: fuzzyFilter };
 
@@ -165,7 +166,7 @@ export const Table = <T,>({ enableFeature = defaultFeature, onClickRow, ...props
             pageSize,
           }
         : undefined,
-      globalFilter: isClientControl ? globalFilter : search.get('search'),
+      globalFilter: isClientControl ? globalFilter : search.search,
     },
   });
 
@@ -182,7 +183,7 @@ export const Table = <T,>({ enableFeature = defaultFeature, onClickRow, ...props
   }, [globalFilter, table]);
 
   useEffect(() => {
-    if (search.get('search') !== undefined && isClientControl) setGlobalFilter(search.get('search') ?? undefined);
+    if (search.search !== undefined && isClientControl) setGlobalFilter(search.search ?? undefined);
   }, [isClientControl, search]);
 
   return (
@@ -272,7 +273,19 @@ export const Table = <T,>({ enableFeature = defaultFeature, onClickRow, ...props
 
                 <div className="flex items-center gap-2">
                   <p className="text-sm w-24">Page Size</p>
-                  <Select value={table.getState().pagination.pageSize.toString()} onValueChange={(value) => table.setPageSize(Number(value))}>
+                  <Select
+                    value={search.per_page.toString()}
+                    onValueChange={(value) =>
+                      navigate({
+                        search(_prev) {
+                          return {
+                            ..._prev,
+                            per_page: value,
+                          };
+                        },
+                      })
+                    }
+                  >
                     <SelectTrigger className="w-[70px] h-8">
                       <SelectValue />
                     </SelectTrigger>

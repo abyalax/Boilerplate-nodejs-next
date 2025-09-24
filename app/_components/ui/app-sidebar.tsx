@@ -7,6 +7,7 @@ import { useSession } from 'next-auth/react';
 import { ComponentType, SVGProps, useMemo, useState } from 'react';
 
 import { PERMISSIONS } from '~/common/const/permission';
+import { usePermissions } from '~/components/hooks/use-permissions';
 import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar';
 import { Badge } from '~/components/ui/badge';
 import {
@@ -25,7 +26,6 @@ import {
   SidebarMenuSubItem,
   useSidebar,
 } from '~/components/ui/sidebar';
-import { usePermissions } from '~/hooks/use-permissions';
 import { cn } from '~/lib/utils';
 
 export interface MenuItem {

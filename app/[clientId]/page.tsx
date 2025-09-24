@@ -33,5 +33,5 @@ type Props = PageProps<'/[clientId]/admin'>;
 export default async function Page({ params }: Props) {
   const { clientId } = await params;
   const breadcrumbs = breadcrumbItems(clientId);
-  return <PageScreen title="Dashboard Client Admin" breadcrumbs={breadcrumbs} />;
+  return <PageScreen title="Dashboard Client Admin" breadcrumbs={breadcrumbs}></PageScreen>;
 }

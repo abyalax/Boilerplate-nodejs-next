@@ -1,4 +1,5 @@
 import { UseMutationResult, useMutation } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import { toast } from 'react-toastify';
 
 import { QUERY_KEY } from '~/common/const/querykey';
@@ -11,9 +12,10 @@ export const useForgotPassword = (): UseMutationResult<TAxiosResponse<unknown>, 
     mutationFn: async (payload) => await forgotPassword(payload),
     meta: { invalidateQueries: [QUERY_KEY.CLIENT.GETS] },
     onSuccess: () => toast.success('Send Email Reset Password, check your email'),
-    onError: (error) => {
+    onError: (error: AxiosError<TResponse>) => {
       console.log('useForgotPassword error : ', error);
-      toast.error(error.message);
+      const message = error.response?.data.message ?? 'Failed to request forgot password';
+      toast.error(message);
     },
   });
 };

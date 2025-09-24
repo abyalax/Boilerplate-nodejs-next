@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export const permissions = [PERMISSIONS.CUSTOMER.READ];
 
-const breadcrumbItems = [
+const breadcrumbItems = (clientId: string) => [
   {
     title: 'Home',
     url: '/',
@@ -19,15 +19,21 @@ const breadcrumbItems = [
   },
   {
     title: 'Admin',
-    url: '/admin',
-    active: false,
+    url: `/${clientId}/admin`,
+    active: true,
   },
   {
     title: 'Customers',
-    url: '/admin/customers',
-    active: true,
+    url: `/${clientId}/admin/customers`,
+    active: false,
   },
 ];
-export default function Page() {
-  return <PageScreen title="Dashboard Client Admin" breadcrumbs={breadcrumbItems} />;
+
+type Props = PageProps<'/[clientId]/admin'>;
+
+export default async function Page({ params }: Props) {
+  const { clientId } = await params;
+  const breadcrumbs = breadcrumbItems(clientId);
+
+  return <PageScreen title="Dashboard Client Admin" breadcrumbs={breadcrumbs} />;
 }

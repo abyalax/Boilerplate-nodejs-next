@@ -4,9 +4,9 @@ import { api } from '~/lib/axios/api';
 
 import { CreateUser, UpdateUser, User } from '../../db/schema/users/users.schema';
 
-export const getClients = async (params: MetaRequest): Promise<TAxiosResponse<{ data: User[]; meta: MetaResponse }>> => {
-  // await new Promise((resolve) => setTimeout(resolve, 2000));
-  return api.get(`/backoffice/clients`, { params });
+export const getClients = async (params: MetaRequest<User>): Promise<TAxiosResponse<{ data: User[]; meta: MetaResponse }>> => {
+  console.log(params);
+  return api.get(`/backoffice/clients`, { params: params });
 };
 
 export const getClient = async (clientId: string): Promise<TAxiosResponse<User[]>> => {

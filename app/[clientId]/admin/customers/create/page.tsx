@@ -1,38 +1,33 @@
 import { Metadata } from 'next';
 
-import { PERMISSIONS } from '~/common/const/permission';
 import { PageScreen } from '~/components/layouts/page';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
-
-import { FormCreateCustomer } from './_components/form-create-customer';
+import { Component } from './_components';
 
 export const metadata: Metadata = {
-  title: 'Create User | Admin Dashboard',
-  description: 'Add a new user and assign roles & permissions in the system.',
-  keywords: ['create user', 'admin', 'dashboard', 'roles', 'permissions'],
+  title: 'Create client | Admin Dashboard',
+  description: 'Add a new client and assign roles & permissions in the system.',
+  keywords: ['create client', 'admin', 'dashboard', 'roles', 'permissions'],
   openGraph: {
-    title: 'Create User - Admin Dashboard',
-    description: 'Add a new user and assign roles & permissions in the system.',
+    title: 'Create client - Admin Dashboard',
+    description: 'Add a new client and assign roles & permissions in the system.',
     type: 'website',
-    url: '/admin/users/create',
+    url: '/admin/client/create',
     images: [
       {
-        url: '/og-image.png', // bisa diganti custom OG image
+        url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Create User Page',
+        alt: 'Create Client Page',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Create User - Admin Dashboard',
-    description: 'Add a new user and assign roles & permissions in the system.',
+    title: 'Create Client - Admin Dashboard',
+    description: 'Add a new client and assign roles & permissions in the system.',
     images: ['/og-image.png'],
   },
 };
-
-export const permissions = [PERMISSIONS.CUSTOMER.CREATE];
 
 const breadcrumbItems = (clientId: string) => [
   {
@@ -62,17 +57,10 @@ type Props = PageProps<'/[clientId]/admin/customers/create'>;
 export default async function Page({ params }: Props) {
   const { clientId } = await params;
   const breadcrumbs = breadcrumbItems(clientId);
+
   return (
     <PageScreen title="Create Customer" breadcrumbs={breadcrumbs}>
-      <Card>
-        <CardHeader>
-          <CardTitle>Customer Information</CardTitle>
-          <CardDescription>Please provide basic details for the new customer.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <FormCreateCustomer />
-        </CardContent>
-      </Card>
+      <Component />
     </PageScreen>
   );
 }

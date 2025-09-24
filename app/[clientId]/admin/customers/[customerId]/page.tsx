@@ -1,5 +1,6 @@
 import { PERMISSIONS } from '~/common/const/permission';
 import { PageScreen } from '~/components/layouts/page';
+import { Component } from './_components';
 
 export const permissions = [PERMISSIONS.CUSTOMER.READ];
 
@@ -32,5 +33,9 @@ export default async function Page({ params }: Props) {
   const { customerId, clientId } = await params;
   const breadcrumbs = breadcrumbItems(clientId, customerId);
 
-  return <PageScreen title="Customer Detail" breadcrumbs={breadcrumbs} />;
+  return (
+    <PageScreen title="Customer Detail" breadcrumbs={breadcrumbs}>
+      <Component />
+    </PageScreen>
+  );
 }

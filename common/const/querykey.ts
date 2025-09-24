@@ -8,7 +8,6 @@ export const QUERY_KEY = {
     FORGOT_PASSWORD: 'forgot_password',
     RESET_PASSWORD: 'reset_password',
   },
-
   CUSTOMER: {
     GETS: 'get_customers',
     GET_BY_ID: 'get_customer_by_id',

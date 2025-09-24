@@ -1,4 +1,4 @@
-import { and, eq, SQL } from 'drizzle-orm';
+import { and, eq, inArray, SQL } from 'drizzle-orm';
 
 import { ROLE } from '~/common/const/permission';
 import { BaseUser, CreateUser, roles, UpdateUser, User, userRoles, users } from '~/db/schema';
@@ -14,14 +14,15 @@ class CustomerRepository {
     this.userRepository = userRepository;
   }
 
-  private async customerWhere(whereClause?: SQL): Promise<SQL> {
+  async customerWhere(whereClause?: SQL): Promise<SQL | undefined> {
     const clientRole = await db.query.roles.findFirst({
       where: eq(roles.name, ROLE.CUSTOMER),
     });
+
     if (!clientRole) throw new NotFoundException(`Role ${ROLE.CUSTOMER} not found`);
-    const clause = and(eq(userRoles.roleId, clientRole.id), whereClause);
-    if (clause === undefined) throw new NotFoundException('Customer not found');
-    return clause;
+    const usersWithClientRole = await db.select({ userId: userRoles.userId }).from(userRoles).where(eq(userRoles.roleId, clientRole.id));
+    const userIds = usersWithClientRole.map((u) => u.userId);
+    return and(inArray(users.id, userIds), whereClause);
   }
 
   async find(whereClause?: SQL): Promise<User[]> {

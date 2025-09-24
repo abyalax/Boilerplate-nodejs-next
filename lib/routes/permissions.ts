@@ -1,5 +1,5 @@
 // Auto-generated file - do not edit manually
-// Generated at: 2025-09-24T08:48:12.463Z
+// Generated at: 2025-09-24T11:57:52.128Z
 
 // Hierarchical permissions (includes parent route permissions)
 export const routePermissions: Record<string, string[]> = {
@@ -24,7 +24,7 @@ export const routePermissions: Record<string, string[]> = {
   '/backoffice/clients/[clientId]/customers': ['client:read', 'customer:read', 'customer:delete'],
   '/[clientId]/customer/orders/[orderId]': ['customer:read_profile', 'customer:read'],
   '/[clientId]/customer/me/profile': ['customer:read_profile'],
-  '/[clientId]/admin/customers/create': ['customer:read_profile', 'customer:read', 'customer:delete', 'customer:create'],
+  '/[clientId]/admin/customers/create': ['customer:read_profile', 'customer:read', 'customer:delete'],
   '/[clientId]/admin/customers/[customerId]': ['customer:read_profile', 'customer:read', 'customer:delete'],
   '/backoffice/clients/[clientId]/customers/[customerId]': ['client:read', 'customer:read', 'customer:delete', 'customer:update'],
   '/[clientId]/customer/me/profile/update': ['customer:read_profile'],
@@ -50,7 +50,7 @@ export const routePermissions: Record<string, string[]> = {
   '/:clientId/customer/orders/:orderId': ['customer:read_profile', 'customer:read'],
   '/[clientId]/customer/me': ['customer:read_profile'],
   '/:clientId/customer/me/profile': ['customer:read_profile'],
-  '/:clientId/admin/customers/create': ['customer:read_profile', 'customer:read', 'customer:delete', 'customer:create'],
+  '/:clientId/admin/customers/create': ['customer:read_profile', 'customer:read', 'customer:delete'],
   '/:clientId/admin/customers/:customerId': ['customer:read_profile', 'customer:read', 'customer:delete'],
   '/backoffice/clients/:clientId/customers/:customerId': ['client:read', 'customer:read', 'customer:delete', 'customer:update'],
   '/:clientId/customer/me/profile/update': ['customer:read_profile'],

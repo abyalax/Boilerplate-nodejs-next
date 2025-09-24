@@ -1,5 +1,8 @@
 import { PERMISSIONS } from '~/common/const/permission';
 import { PageScreen } from '~/components/layouts/page';
+import { getQueryClient } from '~/lib/query/client';
+import { queryGetCustomer } from '../../_hooks/use-get-customer';
+import { Component } from './_components';
 
 export const permissions = [PERMISSIONS.CUSTOMER.UPDATE];
 
@@ -34,7 +37,15 @@ const breadcrumbItems = (clientId: string, customerId: string) => [
 type Props = PageProps<'/[clientId]/admin/customers/[customerId]/update'>;
 
 export default async function Page({ params }: Props) {
+  const queryClient = getQueryClient();
   const { customerId, clientId } = await params;
   const breadcrumbs = breadcrumbItems(clientId, customerId);
-  return <PageScreen title="Update Customer" breadcrumbs={breadcrumbs} />;
+
+  void queryClient.prefetchQuery(queryGetCustomer(clientId, customerId));
+
+  return (
+    <PageScreen title="Update Customer" breadcrumbs={breadcrumbs}>
+      <Component />
+    </PageScreen>
+  );
 }

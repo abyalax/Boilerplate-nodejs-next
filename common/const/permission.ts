@@ -1,17 +1,17 @@
 /** biome-ignore-all lint/style/useNamingConvention: <off> */
 export type roles = 'Customer' | 'Client Admin' | 'System Admin';
 
-export const ROLE: Record<string, roles> = {
+export const ROLE = {
   CUSTOMER: 'Customer',
   CLIENT: 'Client Admin',
   SYSTEM_ADMIN: 'System Admin',
-};
+} as const;
 
-export const ROLEIDS: Record<roles, number> = {
+export const ROLEIDS: Record<string, number> = {
   Customer: 1,
   'Client Admin': 2,
   'System Admin': 3,
-};
+} as const;
 
 export const PERMISSIONS = {
   CLIENT: {

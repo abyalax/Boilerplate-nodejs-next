@@ -12,20 +12,20 @@ type PaginateOptions = {
 };
 
 export async function paginate<T>({ table, page, perPage, orderBy, where }: PaginateOptions): Promise<{ data: T[]; meta: MetaResponse }> {
-  const totalCountResult = await db.select({ count: sql<number>`count(*)`.mapWith(Number) }).from(table);
+  const totalCountResult = await db
+    .select({ count: sql<number>`count(*)`.mapWith(Number) })
+    .from(table)
+    .where(where ?? sql`true`);
 
   const totalCount = totalCountResult[0].count;
   const totalPages = Math.ceil(totalCount / perPage);
 
-  const query = db
-    .select()
-    .from(table)
-    .limit(perPage)
-    .offset((page - 1) * perPage);
+  const query = db.select().from(table);
 
   if (where) query.where(where);
   if (orderBy) query.orderBy(orderBy);
 
+  query.limit(perPage).offset((page - 1) * perPage);
   const data = (await query) as T[];
 
   return {
