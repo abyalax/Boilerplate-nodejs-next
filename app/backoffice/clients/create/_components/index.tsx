@@ -20,11 +20,6 @@ export const Component: FC = () => {
   const { mutate, isPending } = useCreateClient();
 
   const handleSubmit = (data: FormDataClient) => {
-    console.log({
-      ...data,
-      roleId: ROLEIDS["Client Admin"],
-    });
-
     mutate({
       ...data,
       roleId: ROLEIDS["Client Admin"],

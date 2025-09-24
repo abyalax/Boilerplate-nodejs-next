@@ -23,16 +23,21 @@ const breadcrumbItems = (clientId: string) => [
   },
   {
     title: "Dashboard",
-    url: `/backoffice`,
+    url: "/backoffice",
     active: false,
   },
   {
-    title: "Clients",
+    title: "Client Managements",
+    url: "/backoffice/clients",
+    active: false,
+  },
+  {
+    title: "Client",
     url: `/backoffice/clients/${clientId}`,
     active: false,
   },
   {
-    title: "Customer Clients",
+    title: "Customers",
     url: `/backoffice/clients/${clientId}/customers`,
     active: true,
   },
@@ -43,5 +48,5 @@ type Props = PageProps<"/backoffice/clients/[clientId]/customers">;
 export default async function Page({ params }: Props) {
   const { clientId } = await params;
   const breadcrumbs = breadcrumbItems(clientId);
-  return <PageScreen title="Customer Client Admin" breadcrumbs={breadcrumbs} />;
+  return <PageScreen title="Customer List" breadcrumbs={breadcrumbs} />;
 }

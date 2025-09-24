@@ -1,17 +1,15 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { FC } from "react";
-
-import { Table } from "~/components/fragments/table";
+import { FC, Suspense } from "react";
+import { FallBack } from "~/components/fragments/fallback";
 import { Button } from "~/components/ui/button";
 import { H1 } from "~/components/ui/typography";
-
-import { useGetClients } from "../_hooks/use-get-clients";
+import { ClientsTable } from "./client-table";
 
 export const Component: FC = () => {
-  const { data } = useGetClients();
   const { push } = useRouter();
+
   return (
     <div>
       <div className="flex justify-between">
@@ -21,32 +19,9 @@ export const Component: FC = () => {
         </Button>
       </div>
 
-      <Table
-        data={data}
-        columns={[
-          {
-            header: "ID",
-            accessorKey: "id",
-          },
-          {
-            header: "Name",
-            accessorKey: "name",
-          },
-          {
-            header: "Email",
-            accessorKey: "email",
-          },
-        ]}
-        columnIds={["id", "name", "email"]}
-        onClickRow={(_e, data) => console.log(data.original)}
-        enableFeature={{
-          search: {
-            fieldSearchable: "name",
-          },
-          engineSide: "server_side",
-          pagination: true,
-        }}
-      />
+      <Suspense fallback={<FallBack />}>
+        <ClientsTable />
+      </Suspense>
     </div>
   );
 };

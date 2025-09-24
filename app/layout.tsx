@@ -1,13 +1,14 @@
-/* eslint-disable no-unused-vars */
+import { dehydrate } from "@tanstack/react-query";
 import "./globals.css";
 
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { ReactNode } from "react";
+import { PropsWithChildren } from "react";
 
 import { QueryKey } from "~/common/const/querykey";
 import { Providers } from "~/components/provider/application";
 import { Permission, Role } from "~/db/schema";
+import { getQueryClient } from "~/lib/query/client";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -70,17 +71,16 @@ declare module "@tanstack/react-query" {
   }
 }
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<PropsWithChildren>) {
+  const queryClient = getQueryClient();
   return (
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Providers>{children}</Providers>
+        <Providers dehydratedState={dehydrate(queryClient)}>
+          {children}
+        </Providers>
       </body>
     </html>
   );

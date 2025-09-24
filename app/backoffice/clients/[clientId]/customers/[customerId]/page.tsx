@@ -10,18 +10,28 @@ const breadcrumbItems = (clientId: string, customerId: string) => [
     active: false,
   },
   {
-    title: "Admin",
-    url: `/${clientId}/admin`,
+    title: "Dashboard",
+    url: "/backoffice",
     active: false,
   },
   {
-    title: "Customers",
-    url: `/${clientId}/admin/customers`,
+    title: "Client Managements",
+    url: "/backoffice/clients",
+    active: false,
+  },
+  {
+    title: "Client",
+    url: `/backoffice/clients/${clientId}`,
+    active: false,
+  },
+  {
+    title: "Customer Clients",
+    url: `/backoffice/clients/${clientId}/customers`,
     active: false,
   },
   {
     title: "Customers Detail",
-    url: `/${clientId}/admin/customers/${customerId}`,
+    url: `/backoffice/clients/${clientId}/customers/${customerId}`,
     active: true,
   },
 ];

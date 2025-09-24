@@ -1,12 +1,12 @@
 // Auto-generated file - do not edit manually
-// Generated at: 2025-09-23T09:29:29.866Z
+// Generated at: 2025-09-24T06:43:50.586Z
 
 // Hierarchical permissions (includes parent route permissions)
 export const routePermissions: Record<string, string[]> = {
   "/": [],
   "/pricing": [],
-  "/order": [],
   "/backoffice": ["client:read"],
+  "/order": [],
   "/[clientId]": ["customer:read_profile"],
   "/backoffice/clients": ["client:read"],
   "/auth/reset-password": [],
@@ -18,8 +18,8 @@ export const routePermissions: Record<string, string[]> = {
   "/backoffice/clients/create": ["client:read"],
   "/backoffice/clients/[clientId]": ["client:read"],
   "/[clientId]/customer/orders": ["customer:read_profile", "customer:read"],
-  "/[clientId]/auth/register": ["customer:read_profile"],
   "/[clientId]/auth/login": ["customer:read_profile"],
+  "/[clientId]/auth/register": ["customer:read_profile"],
   "/[clientId]/admin/customers": [
     "customer:read_profile",
     "customer:read",
@@ -46,13 +46,6 @@ export const routePermissions: Record<string, string[]> = {
     "customer:read",
     "customer:delete",
   ],
-  "/backoffice/clients/[clientId]/customers/create": [
-    "client:read",
-    "customer:read",
-    "customer:delete",
-    "customer:create",
-    "customer:update",
-  ],
   "/backoffice/clients/[clientId]/customers/[customerId]": [
     "client:read",
     "customer:read",
@@ -66,10 +59,10 @@ export const routePermissions: Record<string, string[]> = {
     "customer:delete",
     "customer:update",
   ],
-  "/api/backoffice/clients": ["client:read", "client:create"],
   "/api/auth/reset-password": [],
   "/api/auth/forgot-password": [],
   "/api/auth/[...nextauth]": [],
+  "/api/backoffice/clients": ["client:read", "client:create"],
   "/api/[clientId]/customers": ["customer:read", "customer:create"],
   "/api/backoffice/clients/[clientId]": ["client:read", "client:create"],
   "/api/[clientId]/customers/[id]": [
@@ -85,8 +78,8 @@ export const routePermissions: Record<string, string[]> = {
   "/backoffice/clients/:clientId": ["client:read"],
   "/:clientId/customer/orders": ["customer:read_profile", "customer:read"],
   "/[clientId]/auth": ["customer:read_profile"],
-  "/:clientId/auth/register": ["customer:read_profile"],
   "/:clientId/auth/login": ["customer:read_profile"],
+  "/:clientId/auth/register": ["customer:read_profile"],
   "/:clientId/admin/customers": [
     "customer:read_profile",
     "customer:read",
@@ -114,13 +107,6 @@ export const routePermissions: Record<string, string[]> = {
     "customer:read",
     "customer:delete",
   ],
-  "/backoffice/clients/:clientId/customers/create": [
-    "client:read",
-    "customer:read",
-    "customer:delete",
-    "customer:create",
-    "customer:update",
-  ],
   "/backoffice/clients/:clientId/customers/:customerId": [
     "client:read",
     "customer:read",
@@ -135,9 +121,9 @@ export const routePermissions: Record<string, string[]> = {
     "customer:update",
   ],
   "/api": [],
-  "/api/backoffice": [],
   "/api/auth": [],
   "/api/auth/*": [],
+  "/api/backoffice": [],
   "/api/[clientId]": [],
   "/api/:clientId/customers": ["customer:read", "customer:create"],
   "/api/backoffice/clients/:clientId": ["client:read", "client:create"],

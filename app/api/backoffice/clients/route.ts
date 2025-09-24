@@ -3,29 +3,32 @@ import { NextResponse } from "next/server";
 import { PERMISSIONS } from "~/common/const/permission";
 import { MetaResponse } from "~/common/types/meta";
 import { TResponse } from "~/common/types/response";
+import { paginate } from "~/db/helper";
 import { clientRepository } from "~/db/repositories/clients.repository";
-import { BaseUser, User, userInsertSchema } from "~/db/schema";
+import { BaseUser, userInsertSchema, users } from "~/db/schema";
 import { safeHandler } from "~/lib/handler/safe-handler";
 
 export const permissions = [PERMISSIONS.CLIENT.READ, PERMISSIONS.CLIENT.CREATE];
 
-// TODO: Implement Pagination
 export const GET = safeHandler(
-  async (): Promise<
-    NextResponse<TResponse<{ data: User[]; meta: MetaResponse }>>
+  async (
+    req,
+  ): Promise<
+    NextResponse<TResponse<{ data: BaseUser[]; meta: MetaResponse }>>
   > => {
-    const user = await clientRepository.findMany();
+    const pageParams = req.nextUrl.searchParams.get("page");
+    const perPageParams = req.nextUrl.searchParams.get("per_page");
+    const page = pageParams ? Number(pageParams) : 1;
+    const perPage = perPageParams ? Number(perPageParams) : 10;
+    const whereClause = await clientRepository.clientWhere();
+    const data = await paginate<BaseUser>({
+      table: users,
+      page,
+      perPage,
+      where: whereClause,
+    });
     return NextResponse.json({
-      data: {
-        data: user,
-        meta: {
-          total: 20,
-          page: 1,
-          per_page: 10,
-          total_count: 100,
-          total_pages: 10,
-        },
-      },
+      data,
     });
   },
 );

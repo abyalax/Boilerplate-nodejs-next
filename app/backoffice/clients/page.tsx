@@ -1,9 +1,9 @@
 import { Metadata } from "next";
-
 import { PERMISSIONS } from "~/common/const/permission";
 import { PageScreen } from "~/components/layouts/page";
-
+import { getQueryClient } from "~/lib/query/client";
 import { Component } from "./_components";
+import { queryGetClients } from "./_hooks/use-get-clients";
 
 export const metadata: Metadata = {
   title: "Admin Client Management | Admin Dashboard",
@@ -32,7 +32,13 @@ const breadcrumbItems = [
   },
 ];
 
-export default function Page() {
+type Props = PageProps<"/backoffice/clients">;
+
+export default async function Page({ searchParams }: Props) {
+  const params = await searchParams;
+  const queryClient = getQueryClient();
+  void queryClient.prefetchQuery(queryGetClients(params));
+
   return (
     <PageScreen title="Client Managements" breadcrumbs={breadcrumbItems}>
       <Component />

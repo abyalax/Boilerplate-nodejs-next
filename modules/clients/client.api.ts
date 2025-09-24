@@ -1,4 +1,4 @@
-import { MetaResponse } from "~/common/types/meta";
+import { MetaRequest, MetaResponse } from "~/common/types/meta";
 import { TAxiosResponse } from "~/common/types/response";
 import { api } from "~/lib/axios/api";
 
@@ -8,10 +8,11 @@ import {
   User,
 } from "../../db/schema/users/users.schema";
 
-export const getClients = async (): Promise<
-  TAxiosResponse<{ data: User[]; meta: MetaResponse }>
-> => {
-  return api.get(`/backoffice/clients`, {});
+export const getClients = async (
+  params: MetaRequest,
+): Promise<TAxiosResponse<{ data: User[]; meta: MetaResponse }>> => {
+  // await new Promise((resolve) => setTimeout(resolve, 2000));
+  return api.get(`/backoffice/clients`, { params });
 };
 
 export const getClient = async (

@@ -1,5 +1,8 @@
 import { PERMISSIONS } from "~/common/const/permission";
 import { PageScreen } from "~/components/layouts/page";
+import { getQueryClient } from "~/lib/query/client";
+import { queryGetClientByID } from "../_hooks/use-get-client-by-id";
+import { Component } from "./_components";
 
 export const permissions = [PERMISSIONS.CLIENT.READ];
 
@@ -11,7 +14,12 @@ const breadcrumbItems = (clientId: string) => [
   },
   {
     title: "Dashboard",
-    url: `/backoffice`,
+    url: "/backoffice",
+    active: false,
+  },
+  {
+    title: "Client Managements",
+    url: "/backoffice/clients",
     active: false,
   },
   {
@@ -24,7 +32,13 @@ const breadcrumbItems = (clientId: string) => [
 type Props = PageProps<"/backoffice/clients/[clientId]">;
 
 export default async function Page({ params }: Props) {
+  const queryClient = getQueryClient();
   const { clientId } = await params;
   const breadcrumbs = breadcrumbItems(clientId);
-  return <PageScreen title="Home Client Admin" breadcrumbs={breadcrumbs} />;
+  void queryClient.prefetchQuery(queryGetClientByID(clientId));
+  return (
+    <PageScreen title="Client Information" breadcrumbs={breadcrumbs}>
+      <Component />
+    </PageScreen>
+  );
 }

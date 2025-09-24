@@ -54,7 +54,7 @@
       "quoteStyle": "single",
       "indentStyle": "space",
       "indentWidth": 2,
-      "lineWidth": 170,
+      "lineWidth": 160,
       "trailingCommas": "all",
       "arrowParentheses": "always"
     }

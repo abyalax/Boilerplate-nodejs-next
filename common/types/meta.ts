@@ -4,13 +4,16 @@ interface Pagination {
 }
 interface Sorting<E> {
   sort_by?: keyof E | undefined;
-  sort_order?: 'ASC' | 'DESC';
+  sort_order?: "ASC" | "DESC";
 }
 interface GlobalFilter {
   search?: string;
 }
 
-export interface MetaRequest<E> extends Pagination, Sorting<E>, GlobalFilter {}
+export interface MetaRequest<E = undefined>
+  extends Pagination,
+    Sorting<E>,
+    GlobalFilter {}
 
 export interface MetaResponse {
   page: number;
