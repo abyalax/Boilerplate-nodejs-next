@@ -8,7 +8,7 @@ import GoogleProvider from 'next-auth/providers/google';
 import { env } from '~/common/const/credential';
 import { userRepository } from '~/db/repositories/users.repository';
 import { users } from '~/db/schema';
-import { NotFoundException } from '~/lib/handler/error';
+import { NotFoundException, UnauthorizedException } from '~/lib/handler/error';
 
 const options: AuthOptions = {
   session: {
@@ -47,8 +47,8 @@ const options: AuthOptions = {
         if (credentials?.email && credentials?.password) {
           const user = await userRepository.rawFindFirst(eq(users.email, credentials?.email));
           if (user === undefined) throw new NotFoundException('User not found');
-          const isValid = bcrypt.compare(credentials.password, user.password);
-          if (!isValid) return null;
+          const isValid = await bcrypt.compare(credentials.password, user.password);
+          if (!isValid) throw new UnauthorizedException('Invalid Password');
           return userRepository.flattenRolePermission(user);
         } else {
           return null;

@@ -1,5 +1,5 @@
 // Auto-generated file - do not edit manually
-// Generated at: 2025-09-24T06:51:24.780Z
+// Generated at: 2025-09-24T08:48:12.463Z
 
 // Hierarchical permissions (includes parent route permissions)
 export const routePermissions: Record<string, string[]> = {
@@ -9,8 +9,8 @@ export const routePermissions: Record<string, string[]> = {
   '/backoffice': ['client:read'],
   '/[clientId]': ['customer:read_profile'],
   '/backoffice/clients': ['client:read'],
-  '/auth/register': [],
   '/auth/reset-password': [],
+  '/auth/register': [],
   '/auth/login': [],
   '/auth/forgot-password': [],
   '/[clientId]/customer': ['customer:read_profile'],
@@ -22,8 +22,8 @@ export const routePermissions: Record<string, string[]> = {
   '/[clientId]/auth/login': ['customer:read_profile'],
   '/[clientId]/admin/customers': ['customer:read_profile', 'customer:read', 'customer:delete'],
   '/backoffice/clients/[clientId]/customers': ['client:read', 'customer:read', 'customer:delete'],
-  '/[clientId]/customer/me/profile': ['customer:read_profile'],
   '/[clientId]/customer/orders/[orderId]': ['customer:read_profile', 'customer:read'],
+  '/[clientId]/customer/me/profile': ['customer:read_profile'],
   '/[clientId]/admin/customers/create': ['customer:read_profile', 'customer:read', 'customer:delete', 'customer:create'],
   '/[clientId]/admin/customers/[customerId]': ['customer:read_profile', 'customer:read', 'customer:delete'],
   '/backoffice/clients/[clientId]/customers/[customerId]': ['client:read', 'customer:read', 'customer:delete', 'customer:update'],
@@ -47,9 +47,9 @@ export const routePermissions: Record<string, string[]> = {
   '/:clientId/auth/login': ['customer:read_profile'],
   '/:clientId/admin/customers': ['customer:read_profile', 'customer:read', 'customer:delete'],
   '/backoffice/clients/:clientId/customers': ['client:read', 'customer:read', 'customer:delete'],
+  '/:clientId/customer/orders/:orderId': ['customer:read_profile', 'customer:read'],
   '/[clientId]/customer/me': ['customer:read_profile'],
   '/:clientId/customer/me/profile': ['customer:read_profile'],
-  '/:clientId/customer/orders/:orderId': ['customer:read_profile', 'customer:read'],
   '/:clientId/admin/customers/create': ['customer:read_profile', 'customer:read', 'customer:delete', 'customer:create'],
   '/:clientId/admin/customers/:customerId': ['customer:read_profile', 'customer:read', 'customer:delete'],
   '/backoffice/clients/:clientId/customers/:customerId': ['client:read', 'customer:read', 'customer:delete', 'customer:update'],

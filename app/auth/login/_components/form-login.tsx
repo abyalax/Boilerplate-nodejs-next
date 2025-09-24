@@ -30,13 +30,13 @@ export const FormLogin = () => {
   const onSubmit = form.handleSubmit(async (data) => {
     const res = await signIn('credentials', {
       ...data,
-      redirect: true,
+      redirect: false,
       callbackUrl: '/',
     });
     if (res?.error) {
       toast.error(res.error);
     } else {
-      toast.success('Login berhasil');
+      toast.success('Login successfully');
       form.reset();
     }
   });
