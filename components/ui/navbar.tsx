@@ -27,7 +27,7 @@ export const Navbar: FC<NavbarProps> = ({ navigation }) => {
   const { data: session } = useSession();
 
   return (
-    <div className="border-b w-full">
+    <div className="border-b w-full sticky top-0 z-50 bg-background">
       <div className="flex pr-24 h-16 w-full items-center">
         <Flex justify="space-between" className="min-w-2xs">
           <Link href="/" className="flex items-center space-x-2 mx-6">

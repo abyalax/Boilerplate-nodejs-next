@@ -2,45 +2,41 @@
 
 import { Chart, ChartTypeRegistry } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { ReactNode, useEffect, useMemo, useRef } from 'react';
+import Lottie from 'lottie-react';
+import { ComponentType, useEffect, useMemo, useRef } from 'react';
+import { NotDataFoundV2 } from '~/assets';
+import { FallBack } from '../fragments/fallback';
+import { Flex } from '../layouts/flex';
 
 Chart.register(ChartDataLabels);
 
-/** Dataset config for pie/doughnut */
-export interface PieDatasetConfig {
-  label: string;
-  backgroundColor: string[];
-  hoverBackgroundColor?: string[];
-  borderWidth?: number;
-}
-
-/** Config for pie chart behavior/appearance */
-export interface PieChartConfig {
-  responsive?: boolean;
-  datalabels?: {
-    color?: string;
-    fontSize?: number;
-    formatter?: (value: number, label: string) => string;
-  };
-  tooltipFormatter?: (ctx: { value: number; label: string; rawData: Record<string, unknown> }) => string[];
-  legendPosition?: 'top' | 'bottom' | 'left' | 'right';
-}
-
-/** Props for reusable PieChart */
 export interface PieChartProps<T extends Record<string, string>> {
   data?: T[];
   loading: boolean;
   labelKey: keyof T;
   valueKey: keyof T;
-  dataset: PieDatasetConfig;
-  config?: PieChartConfig;
+  dataset: {
+    label: string;
+    backgroundColor: string[];
+    hoverBackgroundColor?: string[];
+    borderWidth?: number;
+  };
+  config?: Partial<{
+    responsive: boolean;
+    datalabels: {
+      color: string;
+      fontSize: number;
+      formatter: (value: number, label: string) => string;
+    };
+    tooltipFormatter: (ctx: { value: number; label: string; rawData: T }) => string[];
+    legendPosition: 'top' | 'bottom' | 'left' | 'right';
+  }>;
 
-  /** Optional custom fallback UI */
-  loadingFallback?: ReactNode;
-  emptyState?: ReactNode;
+  LoadingComponent?: ComponentType;
+  NoDataComponent?: ComponentType;
 }
 
-const DEFAULT_CONFIG: Required<PieChartConfig> = {
+const DEFAULT_CONFIG: Required<PieChartProps<Record<string, string>>['config']> = {
   responsive: true,
   datalabels: {
     color: 'white',
@@ -58,14 +54,13 @@ export function PieChart<T extends Record<string, string>>({
   valueKey,
   dataset,
   config = {},
-  loadingFallback,
-  emptyState,
+  LoadingComponent,
+  NoDataComponent,
 }: PieChartProps<T>) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const chartRef = useRef<Chart<keyof ChartTypeRegistry> | null>(null);
 
   const chartOptions = useMemo(() => {
-    // Merge user config with defaults
     const chartConfig = { ...DEFAULT_CONFIG, ...config };
     return chartConfig;
   }, [config]);
@@ -96,11 +91,11 @@ export function PieChart<T extends Record<string, string>>({
         responsive: chartOptions.responsive,
         plugins: {
           datalabels: {
-            color: chartOptions.datalabels.color,
-            font: { size: chartOptions.datalabels.fontSize },
+            color: chartOptions.datalabels?.color,
+            font: { size: chartOptions.datalabels?.fontSize },
             formatter: (value: number, context) => {
               const label = context.chart.data.labels?.[context.dataIndex] as string;
-              return chartOptions.datalabels.formatter?.(value, label);
+              return chartOptions.datalabels?.formatter?.(value, label);
             },
           },
           legend: {
@@ -111,7 +106,7 @@ export function PieChart<T extends Record<string, string>>({
               label: (tooltipItem) => {
                 const idx = tooltipItem.dataIndex;
                 const rawData = data[idx];
-                return chartOptions.tooltipFormatter({
+                return chartOptions.tooltipFormatter?.({
                   value: values[idx],
                   label: labels[idx],
                   rawData,
@@ -126,9 +121,18 @@ export function PieChart<T extends Record<string, string>>({
     return () => chartRef.current?.destroy();
   }, [labels, values, dataset, data, chartOptions]);
 
-  if (loading) return <>{loadingFallback ?? <div>Loading chart…</div>}</>;
+  if (loading) return <>{LoadingComponent ?? <FallBack />}</>;
 
-  if (!data || data.length === 0) return <>{emptyState ?? <div style={{ textAlign: 'center' }}>No data available</div>}</>;
+  if (!data || data.length === 0)
+    return (
+      <>
+        {NoDataComponent ?? (
+          <Flex style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <Lottie autoplay loop animationData={NotDataFoundV2} style={{ height: '300px', width: '300px' }} />
+          </Flex>
+        )}
+      </>
+    );
 
   return <canvas ref={canvasRef} />;
 }

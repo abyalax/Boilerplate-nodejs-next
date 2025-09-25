@@ -4,7 +4,7 @@ import { ScriptableContext } from 'chart.js';
 import { useCallback, useMemo } from 'react';
 import { BubbleChart, BubbleChartDataPoint } from '~/components/charts/bubble-chart';
 import { H2 } from '~/components/ui/typography';
-import { DataBubbleChart, data } from './config';
+import { bubleChartConfig, Data, data } from './config';
 
 export const ExampleBubbleChart = () => {
   const palette = ['#18551aff', '#2196f3', '#ff9800', '#3027b0ff', '#f44336', '#00bcd4', '#acfa52ff', '#ffeb3b', '#795548', '#607d8b'];
@@ -24,7 +24,7 @@ export const ExampleBubbleChart = () => {
     return map;
   }, [categories, djb2Hash]);
 
-  const transformData = useCallback((data: DataBubbleChart[]) => {
+  const transformData = useCallback((data: Data[]) => {
     const revenues = data.map((d) => Number(d.revenue));
     const minRev = Math.min(...revenues);
     const maxRev = Math.max(...revenues);
@@ -58,26 +58,7 @@ export const ExampleBubbleChart = () => {
     <div>
       <H2>Bubble Chart</H2>
       <div className="h-[600px] w-full flex justify-center items-center">
-        <BubbleChart
-          transformData={transformData}
-          data={data}
-          isLoading={false}
-          datasetConfig={datasetConfig}
-          chartConfig={{
-            aspectRatio: 5 / 2,
-            legendPosition: 'top',
-            scales: {
-              x: {
-                title: { display: true, text: 'Quantity Sold', align: 'center', padding: 0 },
-                grid: { display: false },
-              },
-              y: {
-                title: { display: true, text: 'Margin (%)', align: 'center', padding: 0 },
-                grid: { display: false },
-              },
-            },
-          }}
-        />
+        <BubbleChart transformData={transformData} data={data} isLoading={false} datasetConfig={datasetConfig} chartConfig={bubleChartConfig} />
       </div>
     </div>
   );

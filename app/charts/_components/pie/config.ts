@@ -9,7 +9,7 @@ type Data = {
   total_qty: string;
 };
 
-const data = [
+const data: Data[] = [
   {
     category: 'Electronics',
     total_sales: '125000',
@@ -54,23 +54,18 @@ const data = [
   },
 ];
 
-const labelKey = 'category';
-const valueKey = 'total_qty';
-
-const dataset = {
+const dataset: PieChartProps<Data>['dataset'] = {
   label: 'Total Sales',
   backgroundColor: ['#30b4e1', '#3b7ddd', '#23bf93', '#ff6b6b', '#ff9f43', '#e9c46a'],
   hoverBackgroundColor: ['#1e8fb7', '#2662b0', '#178068', '#cc5252', '#cc7c26', '#b89a4f'],
 };
 
-type Context = { value: number; label: string; rawData: Record<string, unknown> };
-
-const config = {
-  tooltipFormatter: ({ value, label, rawData }: Context) => [
+const config: PieChartProps<Data>['config'] = {
+  tooltipFormatter: ({ value, label, rawData }) => [
     `${label}: ${value} items`,
-    `Revenue: ${formatCurrency(rawData.total_revenue as string)}`,
-    `Profit: ${formatCurrency(rawData.total_profit as string)}`,
-    `Sales: ${formatCurrency(rawData.total_sales as string)}`,
+    `Revenue: ${formatCurrency(rawData.total_revenue)}`,
+    `Profit: ${formatCurrency(rawData.total_profit)}`,
+    `Sales: ${formatCurrency(rawData.total_sales)}`,
   ],
 };
 
@@ -79,6 +74,6 @@ export const configPieChart: PieChartProps<Data> = {
   data,
   dataset,
   config,
-  labelKey,
-  valueKey,
+  labelKey: 'category',
+  valueKey: 'total_qty',
 };

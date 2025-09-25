@@ -1,4 +1,6 @@
-export type DataBubbleChart = {
+import { BubbleChartProps } from '~/components/charts/bubble-chart';
+
+export type Data = {
   name: string;
   category: string;
   revenue: string;
@@ -6,7 +8,7 @@ export type DataBubbleChart = {
   quantity: number;
 };
 
-export const data: DataBubbleChart[] = [
+export const data: Data[] = [
   {
     name: 'T-Shirts Blue',
     category: 'fashion',
@@ -43,3 +45,19 @@ export const data: DataBubbleChart[] = [
     quantity: 400,
   },
 ];
+
+export const bubleChartConfig: BubbleChartProps<Data>['chartConfig'] = {
+  aspectRatio: 5 / 2,
+  responsive: true,
+  legendPosition: 'top',
+  scales: {
+    x: {
+      title: { display: true, text: 'Quantity Sold', align: 'center', padding: 0 },
+      grid: { display: false },
+    },
+    y: {
+      title: { display: true, text: 'Margin (%)', align: 'center', padding: 0 },
+      grid: { display: false },
+    },
+  },
+};
