@@ -1,3 +1,4 @@
+import { SQL, sql } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 
 import { PERMISSIONS } from '~/common/const/permission';
@@ -13,9 +14,16 @@ export const permissions = [PERMISSIONS.CLIENT.READ, PERMISSIONS.CLIENT.CREATE];
 export const GET = safeHandler(async (req): Promise<NextResponse<TResponse<{ data: BaseUser[]; meta: MetaResponse }>>> => {
   const pageParams = req.nextUrl.searchParams.get('page');
   const perPageParams = req.nextUrl.searchParams.get('per_page');
+  const searchParams = req.nextUrl.searchParams.get('search');
+
+  let searchClause: SQL | undefined;
+
   const page = pageParams ? Number(pageParams) : 1;
   const perPage = perPageParams ? Number(perPageParams) : 10;
-  const whereClause = await clientRepository.clientWhere();
+
+  if (searchParams) searchClause = sql`to_tsvector('simple', "users"."name") @@ plainto_tsquery('simple', ${searchParams})`;
+
+  const whereClause = await clientRepository.clientWhere(searchClause);
   const data = await paginate<BaseUser>({
     table: users,
     page,

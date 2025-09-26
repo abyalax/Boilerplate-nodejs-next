@@ -9,6 +9,7 @@
     "ignoreUnknown": false,
     "includes": [
       "**/*.{js,jsx,ts,tsx,json,css,md}",
+      "**/*.{schema,repository,api}.ts",
       "!node_modules",
       "!.next",
       "!out",
@@ -61,6 +62,16 @@
   },
   "assist": {
     "enabled": true,
+    "includes": [
+      "**/*.{js,jsx,ts,tsx,json,css,md}",
+      "**/*.{schema,repository,api}.ts",
+      "!node_modules",
+      "!.next",
+      "!out",
+      "!build",
+      "!dist",
+      "!drizzle"
+    ],
     "actions": {
       "source": {
         "organizeImports": "on"

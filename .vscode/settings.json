@@ -4,5 +4,8 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.biome": "always",
     "source.organizeImports.biome": "always"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
   }
 }

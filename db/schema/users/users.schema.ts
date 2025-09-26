@@ -1,6 +1,5 @@
-import { relations } from 'drizzle-orm';
-import { serial, varchar } from 'drizzle-orm/pg-core';
-import { pgTable } from 'drizzle-orm/pg-core';
+import { relations, sql } from 'drizzle-orm';
+import { index, pgTable, serial, varchar } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createUpdateSchema } from 'drizzle-zod';
 import z from 'zod';
 
@@ -8,12 +7,16 @@ import { Permission } from './permissions.schema';
 import { Role } from './roles.schema';
 import { userRoles } from './user-roles.schema';
 
-export const users = pgTable('users', {
-  id: serial('id').primaryKey(),
-  name: varchar({ length: 255 }).notNull(),
-  password: varchar({ length: 255 }).notNull(),
-  email: varchar({ length: 255 }).notNull().unique(),
-});
+export const users = pgTable(
+  'users',
+  {
+    id: serial('id').primaryKey(),
+    name: varchar({ length: 255 }).notNull(),
+    password: varchar({ length: 255 }).notNull(),
+    email: varchar({ length: 255 }).notNull().unique(),
+  },
+  (table) => [index('name_search_index').using('gin', sql`to_tsvector('simple', ${table.name})`)],
+);
 
 export const usersRelations = relations(users, ({ many }) => ({
   userRoles: many(userRoles),

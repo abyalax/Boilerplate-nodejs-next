@@ -46,8 +46,6 @@ export default async function Page({ searchParams }: Props) {
     sort_order: querySearch.order_by as 'ASC' | 'DESC',
   };
 
-  console.log('query: ', query);
-
   const queryClient = getQueryClient();
   void queryClient.prefetchQuery(queryGetClients(query));
 

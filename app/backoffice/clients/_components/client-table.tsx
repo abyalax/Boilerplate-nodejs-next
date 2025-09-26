@@ -12,6 +12,7 @@ export const ClientsTable = () => {
   const { data } = useGetClients({
     page: Number(search.page ?? 1),
     per_page: Number(search.per_page ?? 10),
+    search: search.search as string,
   });
 
   const { columns, columnIds, initialColumnVisibility } = useColumns({

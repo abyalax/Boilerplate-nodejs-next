@@ -85,6 +85,7 @@ export const Table = <T,>({ enableFeature = defaultFeature, onClickRow, ...props
       }),
       viewTransition: true,
     });
+    setGlobalFilter(value);
   }, debounceSearch);
 
   const clientSearch = useDebouncedCallback((value: string) => {
@@ -290,7 +291,7 @@ export const Table = <T,>({ enableFeature = defaultFeature, onClickRow, ...props
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {enableFeature.pagination.perPageOptions?.map((size) => (
+                      {enableFeature.pagination?.perPageOptions?.map((size) => (
                         <SelectItem key={size} value={size.toString()}>
                           {size}
                         </SelectItem>
