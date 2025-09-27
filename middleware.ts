@@ -30,6 +30,7 @@ function matchesPattern(pathname: string, pattern: string): boolean {
 }
 
 export async function middleware(req: NextRequest) {
+  let loginUrl: string | URL;
   try {
     const pathname = req.nextUrl.pathname;
     // ✅ Skip middleware untuk NextAuth API routes
@@ -42,11 +43,17 @@ export async function middleware(req: NextRequest) {
     console.log(` ${method} ${pathname} 🔑 Required permissions: `, requiredPermissions);
     const hasPermission = requiredPermissions.every((p) => matchPermission(userPermissions, p));
     console.log(`🛡️  pass middleware: `, hasPermission);
-    if (!hasPermission) return NextResponse.redirect(new URL('/auth/login', req.url));
+    if (!hasPermission) {
+      loginUrl = new URL('/auth/login', req.url);
+      loginUrl.searchParams.set('callbackUrl', req.url);
+      return NextResponse.redirect(loginUrl);
+    }
     return NextResponse.next();
   } catch (error) {
     console.dir((error as Error).message);
-    return NextResponse.redirect(new URL('/auth/login', req.url));
+    loginUrl = new URL('/auth/login', req.url);
+    loginUrl.searchParams.set('callbackUrl', req.url);
+    return NextResponse.redirect(loginUrl);
   }
 }
 

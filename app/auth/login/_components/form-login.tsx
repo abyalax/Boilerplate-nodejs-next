@@ -2,11 +2,11 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import z from 'zod';
-
 import { Button } from '~/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
@@ -19,6 +19,10 @@ const loginSchema = z.object({
 });
 
 export const FormLogin = () => {
+  const { push } = useRouter();
+  const searchParams = useSearchParams();
+  const rawCallbackUrl = searchParams.get('callbackUrl');
+  const callbackUrl = rawCallbackUrl ? decodeURIComponent(rawCallbackUrl) : '/';
   const form = useForm({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -31,13 +35,14 @@ export const FormLogin = () => {
     const res = await signIn('credentials', {
       ...data,
       redirect: false,
-      callbackUrl: '/',
+      callbackUrl,
     });
     if (res?.error) {
       toast.error(res.error);
     } else {
       toast.success('Login successfully');
       form.reset();
+      push(res?.url ?? '/');
     }
   });
 
